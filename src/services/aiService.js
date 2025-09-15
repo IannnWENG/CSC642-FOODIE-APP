@@ -4,6 +4,18 @@ class AIService {
     this.apiKey = process.env.REACT_APP_AI_API_KEY || '72442665e4f1431e9e1d90b20e319acd.QEw43fX4e2ADJi2b';
     this.apiUrl = process.env.REACT_APP_AI_API_URL || 'https://open.bigmodel.cn/api/paas/v4/chat/completions';
     this.model = process.env.REACT_APP_AI_MODEL || 'glm-3-turbo';
+    
+    // Diagnostic info
+    this.isProduction = process.env.NODE_ENV === 'production';
+    this.isVercel = window.location.hostname.includes('vercel.app');
+    
+    console.log('🤖 AI Service Initialized:', {
+      hasApiKey: !!this.apiKey,
+      hasApiUrl: !!this.apiUrl,
+      model: this.model,
+      isProduction: this.isProduction,
+      isVercel: this.isVercel
+    });
   }
 
   /**
@@ -16,6 +28,11 @@ class AIService {
    */
   async getAIResponse(message, recommendations, userLocation, selectedRestaurant = null) {
     try {
+      // Save context info for proxy use
+      this.currentRecommendations = recommendations;
+      this.currentUserLocation = userLocation;
+      this.currentSelectedRestaurant = selectedRestaurant;
+      
       // Build context information
       const context = this.buildContext(recommendations, userLocation, selectedRestaurant);
       
@@ -109,13 +126,52 @@ Response:`;
    * You need to implement this method according to your chosen AI service provider
    */
   async callAIAPI(prompt) {
+    // Use proxy API in Vercel environment
+    if (this.isVercel) {
+      return await this.callViaProxy(prompt);
+    }
+    
+    // Direct call in local environment
     if (!this.apiUrl) {
-      return 'AI 服務未設定，請在環境變數中設定 REACT_APP_AI_API_URL 與 REACT_APP_AI_API_KEY';
+      return 'AI service not configured. Please set REACT_APP_AI_API_URL and REACT_APP_AI_API_KEY in environment variables.';
     }
     if (this.apiUrl.includes('zhipu') || this.apiUrl.includes('bigmodel') || this.model.includes('glm')) {
       return await this.callGLM(prompt);
     }
-    return 'AI 服務端點未支援的提供者，請確認設定';
+    return 'AI service endpoint provider not supported. Please check configuration.';
+  }
+
+  /**
+   * Call AI service via Vercel API proxy
+   */
+  async callViaProxy(prompt) {
+    try {
+      console.log('🔄 Using Vercel API proxy to call AI service');
+      
+      const response = await fetch('/api/ai-proxy', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          message: prompt,
+          recommendations: this.currentRecommendations || [],
+          userLocation: this.currentUserLocation || null,
+          selectedRestaurant: this.currentSelectedRestaurant || null
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || `HTTP ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data.response;
+    } catch (error) {
+      console.error('AI Proxy Error:', error);
+      return `AI service temporarily unavailable: ${error.message}`;
+    }
   }
 
   /**
