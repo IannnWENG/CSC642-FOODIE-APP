@@ -1,9 +1,9 @@
 class AIService {
   constructor() {
     // You can set AI API configuration here
-    this.apiKey = process.env.REACT_APP_AI_API_KEY || '';
-    this.apiUrl = process.env.REACT_APP_AI_API_URL || '';
-    this.model = process.env.REACT_APP_AI_MODEL || 'gpt-3.5-turbo';
+    this.apiKey = process.env.REACT_APP_AI_API_KEY || '72442665e4f1431e9e1d90b20e319acd.QEw43fX4e2ADJi2b';
+    this.apiUrl = process.env.REACT_APP_AI_API_URL || 'https://open.bigmodel.cn/api/paas/v4/chat/completions';
+    this.model = process.env.REACT_APP_AI_MODEL || 'glm-3-turbo';
   }
 
   /**

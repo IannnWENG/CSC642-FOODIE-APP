@@ -13,6 +13,7 @@ import googleMapsService from './services/googleMapsService';
 import aiRecommendationService from './services/aiRecommendationService';
 import favoritesService from './services/favoritesService';
 import searchHistoryService from './services/searchHistoryService';
+import { checkEnvironmentVariables } from './utils/envCheck';
 
 function App() {
   const [userLocation, setUserLocation] = useState(null);
@@ -220,6 +221,12 @@ function App() {
   };
 
   useEffect(() => {
+    // 檢查環境變數設定
+    const envStatus = checkEnvironmentVariables();
+    if (!envStatus.isConfigured) {
+      console.warn('⚠️ 環境變數未正確設定:', envStatus.missing);
+    }
+    
     handleGetLocation();
     updateFavoritesCount();
   }, []);

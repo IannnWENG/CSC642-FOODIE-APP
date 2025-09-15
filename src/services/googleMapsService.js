@@ -3,8 +3,15 @@ import realMenuService from './realMenuService';
 
 class GoogleMapsService {
   constructor() {
+    const apiKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
+    
+    if (!apiKey) {
+      console.error('Google Maps API key is not configured');
+      throw new Error('Google Maps API key is required. Please set REACT_APP_GOOGLE_MAPS_API_KEY in your environment variables.');
+    }
+    
     this.loader = new Loader({
-      apiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
+      apiKey: apiKey,
       version: 'weekly',
       libraries: ['places']
     });
@@ -38,7 +45,9 @@ class GoogleMapsService {
   async getCurrentLocation() {
     return new Promise((resolve, reject) => {
       if (!navigator.geolocation) {
-        reject(new Error('This browser does not support geolocation'));
+        // 降級方案：使用預設位置（台北）
+        console.warn('Geolocation not supported, using default location');
+        resolve({ lat: 25.0330, lng: 121.5654 });
         return;
       }
 
@@ -51,19 +60,9 @@ class GoogleMapsService {
           resolve(location);
         },
         (error) => {
-          let errorMessage = 'Unable to get location information';
-          switch (error.code) {
-            case error.PERMISSION_DENIED:
-              errorMessage = 'User denied the geolocation request';
-              break;
-            case error.POSITION_UNAVAILABLE:
-              errorMessage = 'Location information is unavailable';
-              break;
-            case error.TIMEOUT:
-              errorMessage = 'Location request timed out';
-              break;
-          }
-          reject(new Error(errorMessage));
+          console.warn('Geolocation failed, using default location:', error);
+          // 降級方案：使用預設位置
+          resolve({ lat: 25.0330, lng: 121.5654 });
         },
         {
           enableHighAccuracy: true,
