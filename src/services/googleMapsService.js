@@ -45,7 +45,6 @@ class GoogleMapsService {
   async getCurrentLocation() {
     return new Promise((resolve, reject) => {
       if (!navigator.geolocation) {
-        // 降級方案：使用預設位置（台北）
         console.warn('Geolocation not supported, using default location');
         resolve({ lat: 25.0330, lng: 121.5654 });
         return;
@@ -61,7 +60,6 @@ class GoogleMapsService {
         },
         (error) => {
           console.warn('Geolocation failed, using default location:', error);
-          // 降級方案：使用預設位置
           resolve({ lat: 25.0330, lng: 121.5654 });
         },
         {
@@ -110,7 +108,6 @@ class GoogleMapsService {
         fields: ['place_id', 'name', 'formatted_address', 'geometry', 'rating', 'user_ratings_total', 'price_level', 'types', 'photos']
       };
 
-      // 如果提供了位置，添加位置偏置
       if (location) {
         request.location = location;
         request.radius = radius;
@@ -194,7 +191,7 @@ class GoogleMapsService {
   }
 
   calculateDistance(point1, point2) {
-    const R = 6371e3; // 地球半徑（米）
+    const R = 6371e3; 
     const φ1 = point1.lat * Math.PI / 180;
     const φ2 = point2.lat * Math.PI / 180;
     const Δφ = (point2.lat - point1.lat) * Math.PI / 180;
@@ -205,27 +202,24 @@ class GoogleMapsService {
               Math.sin(Δλ/2) * Math.sin(Δλ/2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 
-    return R * c; // 距離（米）
+    return R * c; 
   }
 
-  // 獲取餐廳菜單資訊（優先搜尋真實菜單）
   async getRestaurantMenu(placeId, restaurantInfo = null) {
     try {
-      console.log('🍽️ 開始獲取餐廳菜單:', {
+      console.log('🍽️ Starting to get restaurant menu:', {
         name: restaurantInfo?.name,
         placeId: placeId
       });
 
-      // 使用新的真實菜單搜尋服務
       const menu = await realMenuService.getRestaurantMenu(placeId, restaurantInfo);
       
       if (menu && !menu.noMenuAvailable) {
-        console.log('✅ 成功獲取菜單:', menu.source);
+        console.log('✅ Successfully retrieved menu:', menu.source);
         return menu;
       }
 
-      // 如果真實菜單搜尋失敗，回退到原有的動態生成方法
-      console.log('🔄 回退到動態菜單生成...');
+      console.log('🔄 Falling back to dynamic menu generation...');
       const realPlaceDetails = await this.getPlaceDetails(placeId);
       
       if (!this.isValidRestaurant(realPlaceDetails)) {
@@ -285,7 +279,7 @@ class GoogleMapsService {
       priceLevel: restaurantInfo?.price_level || 0,
       userRatingsTotal: restaurantInfo?.user_ratings_total || 0,
       error: true,
-      errorMessage: `無法取得菜單：${reason}`,
+      errorMessage: `Unable to retrieve menu: ${reason}`,
       noMenuAvailable: true,
       aiSearchAvailable: true, 
       originalRestaurantInfo: restaurantInfo
@@ -294,24 +288,24 @@ class GoogleMapsService {
 
   async searchMenuWithAI(restaurantInfo) {
     try {
-      console.log('🤖 使用AI搜尋菜單:', restaurantInfo.name);
+      console.log('🤖 Using AI to search menu:', restaurantInfo.name);
       
       const aiMenu = await realMenuService.searchMenuWithAI(restaurantInfo);
       
       if (aiMenu && !aiMenu.noMenuAvailable) {
-        console.log('✅ AI搜尋成功獲取菜單');
+        console.log('✅ AI search successfully retrieved menu');
         return aiMenu;
       }
       
       return this.createNoMenuResponse(
         restaurantInfo.place_id || 'ai_search', 
-        'AI無法找到此餐廳的菜單資訊', 
+        'AI unable to find menu information for this restaurant', 
         restaurantInfo
       );
       
     } catch (error) {
       console.error('AI menu search failed:', error);
-      throw new Error('AI 搜尋菜單失敗');
+      throw new Error('AI menu search failed');
     }
   }
 
@@ -331,10 +325,10 @@ class GoogleMapsService {
     const types = restaurantInfo.types || [];
     const editorialSummary = restaurantInfo.editorial_summary || null;
     
-      let query = `餐廳菜單 ${name}`;
+      let query = `Restaurant menu ${name}`;
     
     if (type && type !== 'unknown') {
-      query += ` ${type} 菜系`;
+      query += ` ${type} cuisine`;
     }
     
     if (types && types.length > 0) {
@@ -351,24 +345,24 @@ class GoogleMapsService {
     }
     
     if (rating > 0) {
-      query += ` ${rating}星評分`;
+      query += ` ${rating} star rating`;
       if (userRatingsTotal > 0) {
-        query += ` ${userRatingsTotal}個評論`;
+        query += ` ${userRatingsTotal} reviews`;
       }
     }
     
-    const priceLevels = ['便宜', '中等便宜', '中等', '昂貴', '非常昂貴'];
+    const priceLevels = ['cheap', 'moderately cheap', 'moderate', 'expensive', 'very expensive'];
     if (priceLevels[priceLevel]) {
-      query += ` ${priceLevels[priceLevel]}價格`;
+      query += ` ${priceLevels[priceLevel]} price`;
     }
     
     if (businessStatus) {
       if (businessStatus === 'OPERATIONAL') {
-        query += ' 營業中';
+        query += ' currently open';
       } else if (businessStatus === 'CLOSED_TEMPORARILY') {
-        query += ' 暫時關閉';
+        query += ' temporarily closed';
       } else if (businessStatus === 'CLOSED_PERMANENTLY') {
-        query += ' 永久關閉';
+        query += ' permanently closed';
       }
     }
     
@@ -393,17 +387,16 @@ class GoogleMapsService {
     return query;
   }
 
-  // 從評論中提取關鍵詞
+  // Extract keywords from reviews
   extractKeywordsFromReview(reviewText) {
     const keywords = [];
     const text = reviewText.toLowerCase();
     
-    // 食物相關關鍵詞
+    // Food-related keywords
     const foodKeywords = [
       'pizza', 'pasta', 'sushi', 'burger', 'salad', 'soup', 'steak', 'chicken', 'fish',
-      'pizza', '義大利麵', '壽司', '漢堡', '沙拉', '湯', '牛排', '雞肉', '魚',
       'delicious', 'tasty', 'fresh', 'amazing', 'great', 'excellent', 'wonderful',
-      '美味', '好吃', '新鮮', '驚人', '很棒', '優秀', '精彩'
+      'flavorful', 'mouthwatering', 'scrumptious', 'delectable', 'savory', 'appetizing'
     ];
     
     foodKeywords.forEach(keyword => {
@@ -451,11 +444,11 @@ class GoogleMapsService {
     adjustedMenu.categories.forEach(category => {
       category.items.forEach(item => {
         if (rating >= 4.5) {
-          item.description = `AI 推薦：${item.description} (基於${rating}星評分和${userRatingsTotal}個評論)`;
+          item.description = `AI Recommended: ${item.description} (Based on ${rating} star rating and ${userRatingsTotal} reviews)`;
         } else if (rating >= 4.0) {
-          item.description = `AI 推薦：${item.description} (高評分餐廳)`;
+          item.description = `AI Recommended: ${item.description} (Highly rated restaurant)`;
         } else {
-          item.description = `AI 搜尋：${item.description}`;
+          item.description = `AI Search: ${item.description}`;
         }
         
         const priceMultiplier = this.getPriceMultiplier(priceLevel);
@@ -463,26 +456,26 @@ class GoogleMapsService {
         
         if (reviews.length > 0) {
           const reviewText = reviews.map(r => r.text || '').join(' ').toLowerCase();
-          if (reviewText.includes('delicious') || reviewText.includes('美味')) {
-            item.description += ' (顧客推薦)';
+          if (reviewText.includes('delicious') || reviewText.includes('tasty')) {
+            item.description += ' (Customer recommended)';
           }
-          if (reviewText.includes('fresh') || reviewText.includes('新鮮')) {
-            item.description += ' (新鮮食材)';
+          if (reviewText.includes('fresh') || reviewText.includes('quality')) {
+            item.description += ' (Fresh ingredients)';
           }
         }
         
-        if (queryLower.includes('高評分') || queryLower.includes('高評價')) {
+        if (queryLower.includes('high rating') || queryLower.includes('highly rated')) {
           item.description = `⭐ ${item.description}`;
         }
         
-        if (queryLower.includes('便宜') || queryLower.includes('經濟')) {
+        if (queryLower.includes('cheap') || queryLower.includes('affordable')) {
           item.price = Math.round((item.price * 0.8) * 100) / 100;
-          item.description += ' (經濟實惠)';
+          item.description += ' (Budget-friendly)';
         }
         
-        if (queryLower.includes('昂貴') || queryLower.includes('高檔')) {
+        if (queryLower.includes('expensive') || queryLower.includes('upscale')) {
           item.price = Math.round((item.price * 1.3) * 100) / 100;
-          item.description += ' (精緻料理)';
+          item.description += ' (Fine dining)';
         }
         
         item.aiRecommended = true;
@@ -522,8 +515,8 @@ class GoogleMapsService {
     
     adjustedMenu.categories.forEach(category => {
       category.items.forEach(item => {
-        if (queryLower.includes('高評分') || queryLower.includes('高評價')) {
-          item.description = `AI 推薦：${item.description}`;
+        if (queryLower.includes('high rating') || queryLower.includes('highly rated')) {
+          item.description = `AI Recommended: ${item.description}`;
         }
         
         const priceMultiplier = this.getPriceMultiplier(restaurantInfo.price_level || 2);
@@ -554,11 +547,11 @@ class GoogleMapsService {
     });
     
     if (businessStatus !== 'OPERATIONAL') {
-      return this.createNoMenuResponse(placeId, `餐廳目前${businessStatus === 'CLOSED_TEMPORARILY' ? '暫時關閉' : '永久關閉'}`);
+      return this.createNoMenuResponse(placeId, `Restaurant is currently ${businessStatus === 'CLOSED_TEMPORARILY' ? 'temporarily closed' : 'permanently closed'}`);
     }
     
     if (rating < 2.0) {
-      return this.createNoMenuResponse(placeId, '餐廳評分過低，無法提供菜單');
+      return this.createNoMenuResponse(placeId, 'Restaurant rating too low, unable to provide menu');
     }
     
     const menuData = this.createDynamicMenuData(restaurantName, restaurantType, rating, priceLevel, userRatingsTotal);
@@ -1067,7 +1060,7 @@ class GoogleMapsService {
 
   
   adjustMenuForRestaurant(baseMenu, restaurantName, rating, priceLevel, userRatingsTotal) {
-    const adjustedMenu = JSON.parse(JSON.stringify(baseMenu)); // 深拷貝
+    const adjustedMenu = JSON.parse(JSON.stringify(baseMenu)); // Deep copy
     
     
     const ratingMultiplier = this.getRatingMultiplier(rating);
@@ -1380,7 +1373,7 @@ class GoogleMapsService {
           }
         ]
       },
-      // 韓式餐廳
+      // Korean restaurant
       'korean_restaurant_1': {
         name: "Seoul Kitchen",
         categories: [

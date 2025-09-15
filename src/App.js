@@ -99,7 +99,6 @@ function App() {
         searchParams.radius
       );
 
-      // 為文字搜尋結果添加距離計算
       const placesWithDistance = places.map(place => {
         if (searchParams.location && place.geometry && place.geometry.location) {
           const distance = googleMapsService.calculateDistance(
@@ -111,7 +110,6 @@ function App() {
         return place;
       });
 
-      // 使用AI推薦服務處理結果
       console.log('🔍 Text search places before AI processing:', placesWithDistance.map(p => ({
         name: p.name,
         types: p.types,
@@ -142,7 +140,6 @@ function App() {
 
       setRecommendations(contextualRecommendations);
       
-      // 記錄搜尋歷史
       searchHistoryService.addSearch({
         ...searchParams,
         type: 'text_search',
@@ -160,22 +157,18 @@ function App() {
     console.log('handleSelectPlace called with:', place);
     setIsLoading(true);
     try {
-      // 獲取地點詳細信息，包括評論
-      // 注意：這裡使用原始的 place_id 來獲取 Google Places 詳細信息
-      // 但保留自定義的 place_id 用於菜單載入
+
       const originalPlaceId = place.original_place_id || place.place_id;
       const details = await googleMapsService.getPlaceDetails(originalPlaceId);
       const placeWithDetails = {
         ...place,
         details: details,
-        // 確保保留自定義的 place_id 用於菜單載入
         place_id: place.place_id
       };
       setSelectedPlace(placeWithDetails);
       setShowPlaceDetail(true);
     } catch (error) {
       console.error('Failed to get place details:', error);
-      // 如果獲取詳細信息失敗，仍然顯示基本信息
       setSelectedPlace(place);
       setShowPlaceDetail(true);
     } finally {
@@ -186,7 +179,6 @@ function App() {
   const handleRestaurantClick = async (restaurant) => {
     setSelectedRestaurantForAI(restaurant);
     
-    // Load menu information for the selected restaurant
     try {
       const menu = await googleMapsService.getRestaurantMenu(restaurant.place_id, restaurant);
       const restaurantWithMenu = {
@@ -196,7 +188,6 @@ function App() {
       setSelectedRestaurantForAI(restaurantWithMenu);
     } catch (error) {
       console.error('Failed to load menu:', error);
-      // Still show AI chat even if menu loading fails
     }
     
     setShowAIChat(true);
@@ -221,7 +212,6 @@ function App() {
   };
 
   useEffect(() => {
-    // 檢查環境變數設定
     const envStatus = checkEnvironmentVariables();
     if (!envStatus.isConfigured) {
       console.warn('⚠️ 環境變數未正確設定:', envStatus.missing);
@@ -233,7 +223,6 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-      {/* 標題列 */}
       <header className="bg-white/80 backdrop-blur-md shadow-lg border-b border-gray-200/50 sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 sm:h-20">

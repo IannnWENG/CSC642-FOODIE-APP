@@ -12,25 +12,21 @@ const ReviewsModal = ({ place, isOpen, onClose }) => {
 
   const reviews = place.details.reviews || [];
   
-  // 
   const getProcessedReviews = () => {
     let processedReviews = [...reviews];
-    
-    // 
+
     if (searchTerm) {
       processedReviews = processedReviews.filter(review => 
         review.text.toLowerCase().includes(searchTerm.toLowerCase()) ||
         review.author_name.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
-    
-    // 
+  
     if (filter !== 'all') {
       const targetRating = parseInt(filter);
       processedReviews = processedReviews.filter(review => review.rating === targetRating);
     }
     
-    // 排序
     switch (sortBy) {
       case 'newest':
         processedReviews.sort((a, b) => b.time - a.time);
