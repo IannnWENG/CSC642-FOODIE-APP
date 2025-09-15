@@ -109,11 +109,13 @@ Response:`;
    * You need to implement this method according to your chosen AI service provider
    */
   async callAIAPI(prompt) {
-    I
+    if (!this.apiUrl) {
+      return 'AI 服務未設定，請在環境變數中設定 REACT_APP_AI_API_URL 與 REACT_APP_AI_API_KEY';
+    }
     if (this.apiUrl.includes('zhipu') || this.apiUrl.includes('bigmodel') || this.model.includes('glm')) {
       return await this.callGLM(prompt);
     }
-    
+    return 'AI 服務端點未支援的提供者，請確認設定';
   }
 
   /**
