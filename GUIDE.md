@@ -1,72 +1,61 @@
-# Restaurant Recommender - User Guide
+# Restaurant Recommender - Guide
 
-## Project Overview
-This is an AI-powered restaurant and cafe recommendation system built with React, integrating Google Maps API to provide location services and restaurant recommendations.
+## Overview
 
-##  System Requirements
-- **Node.js**: Version 14.0 or higher
-- **npm**: Version 6.0 or higher
-- **Google Maps API Key**: For maps and location services
+An AI-powered restaurant and cafe recommender built with React. It integrates the Google Maps Platform to get your current location, search nearby places, score results, and provide AI-assisted insights and menu guidance.
 
-##  Quick Start
+## Requirements
 
-### Method 1: Using Startup Script (Recommended)
-1. Open Terminal
-2. Navigate to project directory:
-   ```bash
-   cd /Users/wenglien/Desktop/csc642
-   ```
-3. Run the startup script:
-   ```bash
-   ./start.sh
-   ```
-   
-   The startup script will automatically:
-   - Check and create `.env` file
-   - Install necessary dependencies
-   - Start the application
+- Node.js 14+ (recommended 18+)
+- npm 6+
+- Google Maps API Key (Places, Maps JavaScript)
 
-### Method 2: Manual Setup
-1. Open Terminal and navigate to project directory:
-   ```bash
-   cd /Users/wenglien/Desktop/csc642
-   ```
+## Quick Start
 
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
+1. Install dependencies
 
-3. Create environment variables file:
-   ```bash
-   touch .env
-   ```
+```bash
+cd /Users/xxxx/Desktop/csc642
+npm install
+```
 
-4. Edit `.env` file and add your Google Maps API key:
-   ```
-   REACT_APP_GOOGLE_MAPS_API_KEY=your_api_key_here
-   ```
+2. Create environment variables
 
-5. Start the application:
-   ```bash
-   npm start
-   ```
-   
+```bash
+cp .env.example .env  # if available, otherwise create manually
+```
 
-## Using the Application
+Edit `.env` and set:
 
-1. After starting, the application will automatically open in your browser at `http://localhost:3000`
-2. Allow browser to access your location (for nearby restaurant recommendations)
-3. Use map features to browse and search for restaurants
-4. View AI-recommended restaurants and cafes
+```
+REACT_APP_GOOGLE_MAPS_API_KEY=your_api_key_here
+```
+
+3. Start the dev server
+
+```bash
+npm start
+```
+
+The app opens at `http://localhost:3000`.
+
+Tip: A helper script `./start.sh` is included. Running it will check for `.env`, install dependencies, and start the app.
+
+## How to Use
+
+- Click Get Location to allow the browser to access your location.
+- Choose search radius, type, and price range, then search nearby, or switch to Text Search to search by query.
+- Click a result to see details, reviews, and navigate; open the menu modal for menu items and AI suggestions.
+- Use Favorites to save places; Search History keeps your recent searches locally.
 
 ## Project Structure
+
 ```
 csc642/
-├── public/                 # Static files
-│   └── index.html         # HTML template
-├── src/                   # Source code
-│   ├── components/        # React components
+├── public/
+│   └── index.html
+├── src/
+│   ├── components/
 │   │   ├── AIChatModal.js
 │   │   ├── ErrorMessage.js
 │   │   ├── FavoritesPanel.js
@@ -74,36 +63,40 @@ csc642/
 │   │   ├── LoadingSpinner.js
 │   │   ├── LocationControls.js
 │   │   ├── MapComponent.js
+│   │   ├── MenuAIChat.js
+│   │   ├── MenuModal.js
 │   │   ├── PlaceDetailModal.js
-│   │   └── RecommendationList.js
-│   ├── services/          # Service layer
+│   │   ├── RecommendationList.js
+│   │   └── ReviewsModal.js
+│   ├── services/
 │   │   ├── aiRecommendationService.js
 │   │   ├── aiService.js
+│   │   ├── currencyService.js
 │   │   ├── favoritesService.js
 │   │   ├── googleMapsService.js
+│   │   ├── realMenuService.js
 │   │   └── searchHistoryService.js
-│   ├── App.js            # Main application component
-│   ├── index.js          # Application entry point
-│   └── index.css         # Global styles
-├── package.json          # Project configuration and dependencies
-├── start.sh             # Startup script
-└── tailwind.config.js   # Tailwind CSS configuration
+│   ├── utils/
+│   │   └── envCheck.js
+│   ├── App.js
+│   ├── index.js
+│   └── index.css
+├── package.json
+├── tailwind.config.js
+└── postcss.config.js
 ```
 
-## Available Commands
+## Environment Variables
 
-- `npm start`: Start development server
-- `npm run build`: Build for production
-- `npm test`: Run tests
-- `npm run eject`: Eject Create React App configuration
+- `REACT_APP_GOOGLE_MAPS_API_KEY`: Your Google Maps API key. Without it the map and places search will not work. The app validates this via `src/utils/envCheck.js` and logs a warning if missing.
 
+## Scripts
 
+- `npm start` — start the development server
+- `npm run build` — production build to `build/`
+- `npm test` — run tests (if any)
+- `npm run eject` — eject CRA config
 
-### Reinstalling the Project
-If you encounter issues, you can completely reinstall:
-```bash
-rm -rf node_modules package-lock.json
-npm install
-```
+## Deployment
 
-
+This project is configured as a standard CRA app. A `build/` directory is produced by `npm run build`. You can deploy the contents of `build/` to any static host (e.g., GitHub Pages via the provided `deploy` script, Netlify, etc.).

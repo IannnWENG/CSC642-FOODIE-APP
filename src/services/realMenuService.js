@@ -19,14 +19,14 @@ class RealMenuService {
 
       const cachedMenu = this.getCachedMenu(placeId);
       if (cachedMenu) {
-        console.log('📋 Using cached menu data');
+        console.log('Using cached menu data');
         return cachedMenu;
       }
 
       
       const googleMenu = await this.searchGoogleMapsMenu(placeId, restaurantInfo);
       if (googleMenu && !googleMenu.noMenuAvailable) {
-        console.log('✅ Got menu from Google Maps');
+        console.log('Got menu from Google Maps');
         this.cacheMenu(placeId, googleMenu);
         return googleMenu;
       }
@@ -34,7 +34,7 @@ class RealMenuService {
       
       const websiteMenu = await this.searchRestaurantWebsite(restaurantInfo);
       if (websiteMenu && !websiteMenu.noMenuAvailable) {
-        console.log('✅ Got menu from restaurant website');
+        console.log('Got menu from restaurant website');
         this.cacheMenu(placeId, websiteMenu);
         return websiteMenu;
       }
@@ -43,7 +43,7 @@ class RealMenuService {
       console.log('🤖 Using AI to search for menu...');
       const aiMenu = await this.searchMenuWithAI(restaurantInfo);
       if (aiMenu && !aiMenu.noMenuAvailable) {
-        console.log('✅ Got menu from AI search');
+        console.log('Got menu from AI search');
         this.cacheMenu(placeId, aiMenu);
         return aiMenu;
       }
@@ -52,7 +52,7 @@ class RealMenuService {
       return this.createNoMenuResponse(placeId, 'Unable to find menu information for this restaurant', restaurantInfo, false);
 
     } catch (error) {
-      console.error('❌ Menu search failed:', error);
+      console.error('Menu search failed:', error);
       return this.createNoMenuResponse(placeId, 'Error occurred during menu search', restaurantInfo, false);
     }
   }
@@ -77,15 +77,15 @@ class RealMenuService {
   
   async searchRestaurantWebsite(restaurantInfo) {
     try {
-      console.log('🌐 Searching restaurant website menu...');
+      console.log('Searching restaurant website menu...');
       
       const website = restaurantInfo.website;
       if (!website) {
-        console.log('❌ No restaurant website information');
+        console.log('No restaurant website information');
         return null;
       }
 
-      console.log('🔍 Searching website:', website);
+      console.log('Searching website:', website);
       
       return null;
     } catch (error) {
@@ -96,11 +96,11 @@ class RealMenuService {
 
   async searchMenuWithAI(restaurantInfo) {
     try {
-      console.log('🤖 Using AI to search for menu...');
+      console.log('Using AI to search for menu...');
       
       // Build AI search query
       const searchQuery = this.buildAISearchQuery(restaurantInfo);
-      console.log('🔍 AI search query:', searchQuery);
+      console.log('AI search query:', searchQuery);
 
       // Simulate AI search results
       // In actual implementation, this would call AI API

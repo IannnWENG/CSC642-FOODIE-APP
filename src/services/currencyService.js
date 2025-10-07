@@ -86,10 +86,10 @@ class CurrencyService {
   async updateExchangeRates() {
     try {
       
-      console.log('匯率更新功能 - 目前使用模擬數據');
+      console.log('Currency update function - currently using mock data');
       return true;
     } catch (error) {
-      console.error('更新匯率失敗:', error);
+      console.error('Update exchange rates failed:', error);
       return false;
     }
   }
@@ -101,7 +101,7 @@ class CurrencyService {
     }
 
     if (fromCurrency === toCurrency) {
-      return { rate: 1, text: '相同貨幣' };
+      return { rate: 1, text: 'Same currency' };
     }
 
     const rate = this.exchangeRates[toCurrency] / this.exchangeRates[fromCurrency];

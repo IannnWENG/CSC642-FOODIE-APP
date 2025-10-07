@@ -47,7 +47,7 @@ const MenuModal = ({ place, isOpen, onClose, recommendations = [], userLocation 
   const loadMenu = async () => {
     setLoading(true);
     try {
-      console.log('🍽️ Loading menu for place:', {
+      console.log('Loading menu for place:', {
         name: place.name,
         place_id: place.place_id,
         original_place_id: place.original_place_id,
@@ -55,7 +55,7 @@ const MenuModal = ({ place, isOpen, onClose, recommendations = [], userLocation 
       });
       
       const menuData = await googleMapsService.getRestaurantMenu(place.place_id, place);
-      console.log('📋 Menu data loaded:', menuData);
+      console.log('Menu data loaded:', menuData);
       
       setMenu(menuData);
       if (menuData) {
@@ -142,11 +142,11 @@ const MenuModal = ({ place, isOpen, onClose, recommendations = [], userLocation 
       const aiMenu = await googleMapsService.searchMenuWithAI(restaurantInfo);
       
       if (aiMenu && !aiMenu.noMenuAvailable) {
-        console.log('✅ AI search successfully got menu');
+        console.log('AI search successfully got menu');
         setMenu(aiMenu);
         filterMenuWithData(aiMenu);
       } else {
-        console.log('❌ AI search unable to get menu');
+        console.log('AI search unable to get menu');
       }
     } catch (error) {
       console.error('AI search failed:', error);
@@ -256,7 +256,7 @@ const MenuModal = ({ place, isOpen, onClose, recommendations = [], userLocation 
               {showCurrencyDropdown && (
                 <div className="absolute top-full left-0 mt-1 w-64 bg-white border border-gray-200 rounded-lg shadow-lg z-50 max-h-60 overflow-y-auto">
                   <div className="p-2">
-                    <div className="text-xs font-semibold text-gray-500 mb-2 px-2">選擇貨幣</div>
+                    <div className="text-xs font-semibold text-gray-500 mb-2 px-2">Select currency</div>
                     {currencyService.getSupportedCurrencies().map((currency) => (
                       <button
                         key={currency.code}
