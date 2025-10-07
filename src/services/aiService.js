@@ -1,17 +1,18 @@
 class AIService {
   constructor() {
-    this.apiKey = process.env.REACT_APP_AI_API_KEY || '72442665e4f1431e9e1d90b20e319acd.QEw43fX4e2ADJi2b';
+    this.apiKey = process.env.REACT_APP_AI_API_KEY || '';
     this.apiUrl = process.env.REACT_APP_AI_API_URL || 'https://open.bigmodel.cn/api/paas/v4/chat/completions';
     this.model = process.env.REACT_APP_AI_MODEL || 'glm-3-turbo';    
     this.isProduction = process.env.NODE_ENV === 'production';
     this.isVercel = window.location.hostname.includes('vercel.app');
+    this.proxyUrl = process.env.REACT_APP_AI_PROXY_URL || '';
     
     console.log('🤖 AI Service Initialized:', {
-      hasApiKey: !!this.apiKey,
       hasApiUrl: !!this.apiUrl,
       model: this.model,
       isProduction: this.isProduction,
-      isVercel: this.isVercel
+      isVercel: this.isVercel,
+      usingProxy: !!this.proxyUrl
     });
   }
 
@@ -123,7 +124,11 @@ Response:`;
    * You need to implement this method according to your chosen AI service provider
    */
   async callAIAPI(prompt) {
-    // Use proxy API in Vercel environment
+    // Prefer proxy when configured (for GitHub Pages / any static hosting)
+    if (this.proxyUrl) {
+      return await this.callViaExternalProxy(prompt);
+    }
+    // Backward compatibility: Use Vercel internal proxy if on vercel domain
     if (this.isVercel) {
       return await this.callViaProxy(prompt);
     }
@@ -172,11 +177,43 @@ Response:`;
   }
 
   /**
+   * Call AI service via external proxy (e.g., Cloudflare/Vercel/Netlify URL)
+   */
+  async callViaExternalProxy(prompt) {
+    try {
+      console.log('🔄 Using External API proxy to call AI service', this.proxyUrl);
+      const response = await fetch(this.proxyUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          message: prompt,
+          recommendations: this.currentRecommendations || [],
+          userLocation: this.currentUserLocation || null,
+          selectedRestaurant: this.currentSelectedRestaurant || null
+        })
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || `HTTP ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data.response || data.result || '';
+    } catch (error) {
+      console.error('External AI Proxy Error:', error);
+      return `AI service temporarily unavailable: ${error.message}`;
+    }
+  }
+
+  /**
    * GLM Zhipu AI API call
    */
   async callGLM(prompt) {
     console.log('Calling GLM API with model:', this.model);
-    console.log('API Key:', this.apiKey ? 'Set' : 'Not set');
+    console.log('API Key configured:', !!this.apiKey);
     
     const response = await fetch(this.apiUrl, {
       method: 'POST',
