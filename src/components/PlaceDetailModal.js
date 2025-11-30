@@ -30,6 +30,39 @@ const PlaceDetailModal = ({ place, isOpen, onClose, onFavorite, isFavorite, reco
     }
   };
 
+  const convertWeekdayToEnglish = (weekdayText) => {
+    if (!weekdayText) return weekdayText;
+    
+    // Map Chinese weekdays to English
+    const weekdayMap = {
+      '星期一': 'Monday',
+      '星期二': 'Tuesday',
+      '星期三': 'Wednesday',
+      '星期四': 'Thursday',
+      '星期五': 'Friday',
+      '星期六': 'Saturday',
+      '星期日': 'Sunday',
+      '星期天': 'Sunday',
+      '週一': 'Monday',
+      '週二': 'Tuesday',
+      '週三': 'Wednesday',
+      '週四': 'Thursday',
+      '週五': 'Friday',
+      '週六': 'Saturday',
+      '週日': 'Sunday',
+      '週天': 'Sunday'
+    };
+    
+    let converted = weekdayText;
+    // Replace Chinese weekdays with English
+    Object.keys(weekdayMap).forEach(chinese => {
+      const regex = new RegExp(chinese, 'g');
+      converted = converted.replace(regex, weekdayMap[chinese]);
+    });
+    
+    return converted;
+  };
+
   const handleShare = async () => {
     if (navigator.share) {
       try {
@@ -220,7 +253,7 @@ const PlaceDetailModal = ({ place, isOpen, onClose, onFavorite, isFavorite, reco
               <div className="bg-gray-50 rounded-xl p-4 space-y-2">
                 {details.opening_hours.weekday_text.map((time, index) => (
                   <div key={index} className="text-sm text-gray-700 font-medium">
-                    {time}
+                    {convertWeekdayToEnglish(time)}
                   </div>
                 ))}
               </div>

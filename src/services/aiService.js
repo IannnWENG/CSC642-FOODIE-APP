@@ -7,7 +7,7 @@ class AIService {
     this.isVercel = window.location.hostname.includes('vercel.app');
     this.proxyUrl = process.env.REACT_APP_AI_PROXY_URL || '';
     
-    console.log('🤖 AI Service Initialized:', {
+    console.log('AI Service Initialized:', {
       hasApiUrl: !!this.apiUrl,
       model: this.model,
       isProduction: this.isProduction,

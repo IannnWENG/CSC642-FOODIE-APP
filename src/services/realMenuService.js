@@ -11,7 +11,7 @@ class RealMenuService {
    */
   async getRestaurantMenu(placeId, restaurantInfo) {
     try {
-      console.log('🍽️ Starting real menu search:', {
+      console.log('Starting real menu search:', {
         name: restaurantInfo.name,
         placeId: placeId,
         address: restaurantInfo.vicinity || restaurantInfo.formatted_address
@@ -40,7 +40,7 @@ class RealMenuService {
       }
 
       
-      console.log('🤖 Using AI to search for menu...');
+      console.log('Using AI to search for menu...');
       const aiMenu = await this.searchMenuWithAI(restaurantInfo);
       if (aiMenu && !aiMenu.noMenuAvailable) {
         console.log('Got menu from AI search');
@@ -63,7 +63,7 @@ class RealMenuService {
   async searchGoogleMapsMenu(placeId, restaurantInfo) {
     try {
 
-      console.log('🔍 Searching Google Maps menu...');
+      console.log('Searching Google Maps menu...');
       
       
       // In actual implementation, this would call Google Places API

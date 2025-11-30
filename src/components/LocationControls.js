@@ -34,7 +34,7 @@ const LocationControls = ({
   const handleTextSearch = () => {
     if (!searchQuery.trim()) return;
     
-    // 添加到最近搜尋
+    // Add to recent searches
     const newRecentSearches = [searchQuery, ...recentSearches.filter(s => s !== searchQuery)].slice(0, 5);
     setRecentSearches(newRecentSearches);
     localStorage.setItem('recentSearches', JSON.stringify(newRecentSearches));

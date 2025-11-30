@@ -15,14 +15,13 @@ An AI-powered restaurant and cafe recommender built with React. It integrates th
 1. Install dependencies
 
 ```bash
-cd /Users/xxxx/Desktop/csc642
 npm install
 ```
 
 2. Create environment variables
 
 ```bash
-cp .env.example .env  # if available, otherwise create manually
+cp .env.example .env 
 ```
 
 Edit `.env` and set:
@@ -39,8 +38,6 @@ npm start
 
 The app opens at `http://localhost:3000`.
 
-Tip: A helper script `./start.sh` is included. Running it will check for `.env`, install dependencies, and start the app.
-
 ## How to Use
 
 - Click Get Location to allow the browser to access your location.
@@ -52,35 +49,43 @@ Tip: A helper script `./start.sh` is included. Running it will check for `.env`,
 
 ```
 csc642/
+├── api/
+│   └── ai-proxy.js          # AI API proxy (serverless function)
 ├── public/
+│   ├── 404.html
 │   └── index.html
 ├── src/
 │   ├── components/
-│   │   ├── AIChatModal.js
-│   │   ├── ErrorMessage.js
-│   │   ├── FavoritesPanel.js
-│   │   ├── HelpModal.js
-│   │   ├── LoadingSpinner.js
-│   │   ├── LocationControls.js
-│   │   ├── MapComponent.js
-│   │   ├── MenuAIChat.js
-│   │   ├── MenuModal.js
-│   │   ├── PlaceDetailModal.js
-│   │   ├── RecommendationList.js
-│   │   └── ReviewsModal.js
+│   │   ├── AIChatModal.js       # AI chat interface
+│   │   ├── ErrorMessage.js      # Error display component
+│   │   ├── FavoritesPanel.js    # Favorites management panel
+│   │   ├── HelpModal.js         # Help & instructions modal
+│   │   ├── LoadingSpinner.js    # Loading indicator
+│   │   ├── LocationControls.js  # Location & search controls
+│   │   ├── LoginModal.js        # User login modal
+│   │   ├── MapComponent.js      # Google Maps integration
+│   │   ├── MenuAIChat.js        # Menu AI assistant
+│   │   ├── MenuModal.js         # Restaurant menu display
+│   │   ├── PlaceDetailModal.js  # Place details view
+│   │   ├── RecommendationList.js # AI recommendations list
+│   │   ├── RegisterModal.js     # User registration modal
+│   │   └── ReviewsModal.js      # Place reviews display
+│   ├── contexts/
+│   │   └── AuthContext.js       # Authentication context provider
 │   ├── services/
-│   │   ├── aiRecommendationService.js
-│   │   ├── aiService.js
-│   │   ├── currencyService.js
-│   │   ├── favoritesService.js
-│   │   ├── googleMapsService.js
-│   │   ├── realMenuService.js
-│   │   └── searchHistoryService.js
+│   │   ├── aiRecommendationService.js  # AI recommendation logic
+│   │   ├── aiService.js         # AI API integration
+│   │   ├── authService.js       # Authentication service
+│   │   ├── currencyService.js   # Currency conversion
+│   │   ├── favoritesService.js  # Favorites storage
+│   │   ├── googleMapsService.js # Google Maps API wrapper
+│   │   ├── realMenuService.js   # Menu data service
+│   │   └── searchHistoryService.js # Search history storage
 │   ├── utils/
-│   │   └── envCheck.js
-│   ├── App.js
-│   ├── index.js
-│   └── index.css
+│   │   └── envCheck.js          # Environment validation
+│   ├── App.js                   # Main application component
+│   ├── index.js                 # React entry point
+│   └── index.css                # Global styles (Tailwind)
 ├── package.json
 ├── tailwind.config.js
 └── postcss.config.js

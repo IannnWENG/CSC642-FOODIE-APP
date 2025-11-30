@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { MapPin, Heart, Settings, Info, History, X, Bot } from 'lucide-react';
+import { MapPin, Heart, Info, History, X, Bot, LogIn, LogOut } from 'lucide-react';
 import MapComponent from './components/MapComponent';
 import RecommendationList from './components/RecommendationList';
 import LocationControls from './components/LocationControls';
@@ -9,6 +9,9 @@ import HelpModal from './components/HelpModal';
 import LoadingSpinner from './components/LoadingSpinner';
 import ErrorMessage from './components/ErrorMessage';
 import AIChatModal from './components/AIChatModal';
+import LoginModal from './components/LoginModal';
+import RegisterModal from './components/RegisterModal';
+import { useAuth } from './contexts/AuthContext';
 import googleMapsService from './services/googleMapsService';
 import aiRecommendationService from './services/aiRecommendationService';
 import favoritesService from './services/favoritesService';
@@ -16,6 +19,7 @@ import searchHistoryService from './services/searchHistoryService';
 import { checkEnvironmentVariables } from './utils/envCheck';
 
 function App() {
+  const { user, logout, isAuthenticated } = useAuth();
   const [userLocation, setUserLocation] = useState(null);
   const [recommendations, setRecommendations] = useState([]);
   const [selectedPlace, setSelectedPlace] = useState(null);
@@ -27,8 +31,43 @@ function App() {
   const [showSearchHistory, setShowSearchHistory] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
   const [showAIChat, setShowAIChat] = useState(false);
+  const [showLogin, setShowLogin] = useState(false);
+  const [showRegister, setShowRegister] = useState(false);
   const [favoritesCount, setFavoritesCount] = useState(0);
   const [selectedRestaurantForAI, setSelectedRestaurantForAI] = useState(null);
+
+  const convertWeekdayToEnglish = (weekdayText) => {
+    if (!weekdayText) return weekdayText;
+    
+    // Map Chinese weekdays to English
+    const weekdayMap = {
+      '星期一': 'Monday',
+      '星期二': 'Tuesday',
+      '星期三': 'Wednesday',
+      '星期四': 'Thursday',
+      '星期五': 'Friday',
+      '星期六': 'Saturday',
+      '星期日': 'Sunday',
+      '星期天': 'Sunday',
+      '週一': 'Monday',
+      '週二': 'Tuesday',
+      '週三': 'Wednesday',
+      '週四': 'Thursday',
+      '週五': 'Friday',
+      '週六': 'Saturday',
+      '週日': 'Sunday',
+      '週天': 'Sunday'
+    };
+    
+    let converted = weekdayText;
+    // Replace Chinese weekdays with English
+    Object.keys(weekdayMap).forEach(chinese => {
+      const regex = new RegExp(chinese, 'g');
+      converted = converted.replace(regex, weekdayMap[chinese]);
+    });
+    
+    return converted;
+  };
 
   const handleGetLocation = async () => {
     setIsLoading(true);
@@ -39,7 +78,7 @@ function App() {
       setUserLocation(location);
     } catch (error) {
       setError(error.message);
-      console.error('獲取位置失敗:', error);
+      console.error('Failed to get location:', error);
     } finally {
       setIsLoading(false);
     }
@@ -214,12 +253,57 @@ function App() {
   useEffect(() => {
     const envStatus = checkEnvironmentVariables();
     if (!envStatus.isConfigured) {
-      console.warn('⚠️ 環境變數未正確設定:', envStatus.missing);
+      console.warn('⚠️ Environment variables are not correctly set:', envStatus.missing);
     }
     
-    handleGetLocation();
-    updateFavoritesCount();
-  }, []);
+    // If not logged in, automatically show login interface
+    if (!isAuthenticated) {
+      setShowLogin(true);
+      setShowRegister(false);
+    } else {
+      // After login, close all login/register modal boxes
+      setShowLogin(false);
+      setShowRegister(false);
+      handleGetLocation();
+      updateFavoritesCount();
+    }
+  }, [isAuthenticated]);
+
+  // If not logged in, only show login/register interface
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+        <LoginModal
+          isOpen={showLogin}
+          onClose={() => {
+            // When not logged in, cannot close, but will automatically close after login
+            if (isAuthenticated) {
+              setShowLogin(false);
+            }
+          }}
+          onSwitchToRegister={() => {
+            setShowLogin(false);
+            setShowRegister(true);
+          }}
+          canClose={false}
+        />
+        <RegisterModal
+          isOpen={showRegister}
+          onClose={() => {
+            // When not logged in, cannot close, but will automatically close after registration
+            if (isAuthenticated) {
+              setShowRegister(false);
+            }
+          }}
+          onSwitchToLogin={() => {
+            setShowRegister(false);
+            setShowLogin(true);
+          }}
+          canClose={false}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
@@ -239,6 +323,34 @@ function App() {
             </div>
             
             <div className="hidden sm:flex items-center gap-3">
+              {isAuthenticated ? (
+                <button
+                  onClick={logout}
+                  className="p-3 text-gray-600 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all duration-200 group"
+                  title="Logout"
+                >
+                  <LogOut className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                </button>
+              ) : (
+                <>
+                  <button
+                    onClick={() => setShowLogin(true)}
+                    className="px-4 py-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200 font-medium flex items-center gap-2"
+                    title="Login"
+                  >
+                    <LogIn className="w-4 h-4" />
+                    <span>Login</span>
+                  </button>
+                  <button
+                    onClick={() => setShowRegister(true)}
+                    className="px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-200 font-medium"
+                    title="Sign Up"
+                  >
+                    Sign Up
+                  </button>
+                </>
+              )}
+              
               <button
                 onClick={() => setShowAIChat(true)}
                 className="p-3 text-gray-600 hover:text-purple-500 hover:bg-purple-50 rounded-xl transition-all duration-200 group"
@@ -374,7 +486,7 @@ function App() {
                     <h5 className="font-medium text-gray-700 mb-2">Opening Hours</h5>
                     <div className="text-sm text-gray-600">
                       {selectedPlace.details.opening_hours.weekday_text?.map((time, index) => (
-                        <div key={index}>{time}</div>
+                        <div key={index}>{convertWeekdayToEnglish(time)}</div>
                       ))}
                     </div>
                   </div>
@@ -400,6 +512,24 @@ function App() {
       {/* Mobile Bottom Navigation */}
       <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-gray-200/50 z-40 sm:hidden">
         <div className="flex items-center justify-around py-2">
+          {isAuthenticated ? (
+            <button
+              onClick={logout}
+              className="flex flex-col items-center gap-1 p-3 text-gray-600 hover:text-red-500 transition-colors"
+            >
+              <LogOut className="w-6 h-6" />
+              <span className="text-xs font-medium">Logout</span>
+            </button>
+          ) : (
+            <button
+              onClick={() => setShowLogin(true)}
+              className="flex flex-col items-center gap-1 p-3 text-gray-600 hover:text-blue-500 transition-colors"
+            >
+              <LogIn className="w-6 h-6" />
+              <span className="text-xs font-medium">Login</span>
+            </button>
+          )}
+          
           <button
             onClick={() => setShowAIChat(true)}
             className="flex flex-col items-center gap-1 p-3 text-gray-600 hover:text-purple-500 transition-colors"
@@ -558,6 +688,26 @@ function App() {
           onRestaurantAnalysis={handleRestaurantAnalysis}
         />
       )}
+
+      <LoginModal
+        isOpen={showLogin}
+        onClose={() => setShowLogin(false)}
+        onSwitchToRegister={() => {
+          setShowLogin(false);
+          setShowRegister(true);
+        }}
+        canClose={true}
+      />
+
+      <RegisterModal
+        isOpen={showRegister}
+        onClose={() => setShowRegister(false)}
+        onSwitchToLogin={() => {
+          setShowRegister(false);
+          setShowLogin(true);
+        }}
+        canClose={true}
+      />
     </div>
   );
 }
