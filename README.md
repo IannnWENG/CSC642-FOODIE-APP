@@ -21,7 +21,7 @@ npm install
 2. Create environment variables
 
 ```bash
-cp .env.example .env 
+cp .env.example .env
 ```
 
 Edit `.env` and set:
@@ -44,6 +44,39 @@ The app opens at `http://localhost:3000`.
 - Choose search radius, type, and price range, then search nearby, or switch to Text Search to search by query.
 - Click a result to see details, reviews, and navigate; open the menu modal for menu items and AI suggestions.
 - Use Favorites to save places; Search History keeps your recent searches locally.
+
+## Implemented Features
+
+### Get Location
+
+Retrieves the user's current latitude/longitude using browser geolocation.
+
+### Nearby Search
+
+Users can choose radius, place type, and price range to search for nearby restaurants.
+
+### Interactive Map
+
+- Map centers on the user's location
+- Places are shown with markers
+- Markers are color-coded by "Recommendation Score":
+  - 🟢 Green: High
+  - 🟠 Orange: Medium
+  - 🔴 Red: Low
+- Clicking a marker opens additional details
+
+### AI Assistant
+
+Users can click the robot icon to ask questions or get guidance using AI.
+
+> ⚠️ **Note:** AI Chat currently only works in local development environment (`npm start`). It is not available in the deployed version.
+
+## Limitations
+
+- Some UI components (login, favorites, etc.) are prototypes and not fully functional.
+- Search results depend on Google Maps API availability and quota.
+- AI responses require an active API key and may vary in accuracy.
+- No real backend is implemented; some features use mock/local storage.
 
 ## Project Structure
 
