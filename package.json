@@ -9,7 +9,12 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d build"
+    "deploy": "gh-pages -d build",
+    "firebase:install": "cd functions && npm install",
+    "firebase:build": "npm run build && npm run firebase:install",
+    "firebase:deploy": "npm run firebase:build && firebase deploy",
+    "firebase:deploy:hosting": "npm run build && firebase deploy --only hosting",
+    "firebase:deploy:functions": "npm run firebase:install && firebase deploy --only functions"
   },
   "dependencies": {
     "react": "^18.2.0",

@@ -146,55 +146,55 @@ const PlaceDetailModal = ({ place, isOpen, onClose, onFavorite, isFavorite, reco
         {/* Content */}
         <div className="p-4 sm:p-6 lg:p-8">
           {/* Basic information */}
-          <div className="mb-6">
-            <div className="flex items-start justify-between mb-4">
-              <div className="flex-1">
-                <p className="text-gray-600 mb-2">{place.vicinity || details.formatted_address}</p>
+          <div className="mb-4 sm:mb-6">
+            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 sm:gap-4 mb-4">
+              <div className="flex-1 min-w-0">
+                <p className="text-gray-600 mb-2 text-sm sm:text-base break-words">{place.vicinity || details.formatted_address}</p>
                 
                 {place.distance && (
-                  <div className="flex items-center gap-1 text-sm text-gray-500 mb-2">
-                    <MapPin className="w-4 h-4" />
+                  <div className="flex items-center gap-1 text-xs sm:text-sm text-gray-500 mb-2">
+                    <MapPin className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                     <span>{getDistanceText(place.distance)}</span>
                   </div>
                 )}
               </div>
               
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 sm:gap-3 self-start">
                 <button
                   onClick={() => setShowMenuModal(true)}
-                  className="p-3 text-gray-500 hover:text-green-500 hover:bg-gradient-to-r hover:from-green-50 hover:to-emerald-50 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 border border-gray-200"
+                  className="p-2.5 sm:p-3 text-gray-500 hover:text-green-500 active:text-green-600 hover:bg-gradient-to-r hover:from-green-50 hover:to-emerald-50 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg active:scale-95 border border-gray-200"
                   title="View Menu"
                 >
-                  <Menu className="w-5 h-5" />
+                  <Menu className="w-4 h-4 sm:w-5 sm:h-5" />
                 </button>
                 <button
                   onClick={() => onFavorite(place)}
-                  className={`p-3 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 ${
-                    isFavorite ? 'text-red-500 bg-gradient-to-r from-red-50 to-pink-50 border border-red-200' : 'text-gray-500 hover:text-red-500 hover:bg-gradient-to-r hover:from-red-50 hover:to-pink-50 border border-gray-200'
+                  className={`p-2.5 sm:p-3 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg active:scale-95 ${
+                    isFavorite ? 'text-red-500 bg-gradient-to-r from-red-50 to-pink-50 border border-red-200' : 'text-gray-500 hover:text-red-500 active:text-red-600 hover:bg-gradient-to-r hover:from-red-50 hover:to-pink-50 border border-gray-200'
                   }`}
                 >
-                  <Heart className={`w-5 h-5 ${isFavorite ? 'fill-current' : ''}`} />
+                  <Heart className={`w-4 h-4 sm:w-5 sm:h-5 ${isFavorite ? 'fill-current' : ''}`} />
                 </button>
                 <button
                   onClick={handleShare}
-                  className="p-3 text-gray-500 hover:text-blue-500 hover:bg-gradient-to-r hover:from-blue-50 hover:to-cyan-50 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 border border-gray-200"
+                  className="p-2.5 sm:p-3 text-gray-500 hover:text-blue-500 active:text-blue-600 hover:bg-gradient-to-r hover:from-blue-50 hover:to-cyan-50 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg active:scale-95 border border-gray-200"
                 >
-                  <Share2 className="w-5 h-5" />
+                  <Share2 className="w-4 h-4 sm:w-5 sm:h-5" />
                 </button>
               </div>
             </div>
 
             {/* Rating and price */}
-            <div className="flex items-center gap-6 mb-6">
-              <div className="flex items-center gap-3 bg-yellow-50 px-4 py-2 rounded-xl">
-                <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
-                <span className="font-bold text-lg">{rating.toFixed(1)}</span>
-                <span className="text-gray-600 text-sm">({userRatingsTotal} reviews)</span>
+            <div className="flex flex-wrap items-center gap-2 sm:gap-4 mb-4 sm:mb-6">
+              <div className="flex items-center gap-2 sm:gap-3 bg-yellow-50 px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl">
+                <Star className="w-4 h-4 sm:w-5 sm:h-5 fill-yellow-400 text-yellow-400" />
+                <span className="font-bold text-base sm:text-lg">{rating.toFixed(1)}</span>
+                <span className="text-gray-600 text-xs sm:text-sm">({userRatingsTotal})</span>
               </div>
               
               {place.price_level !== undefined && (
-                <div className="bg-green-50 px-4 py-2 rounded-xl">
-                  <span className="text-gray-700 font-semibold">{getPriceLevel(place.price_level)}</span>
+                <div className="bg-green-50 px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl">
+                  <span className="text-gray-700 font-semibold text-xs sm:text-sm">{getPriceLevel(place.price_level)}</span>
                 </div>
               )}
             </div>
@@ -262,45 +262,48 @@ const PlaceDetailModal = ({ place, isOpen, onClose, onFavorite, isFavorite, reco
 
           {/* Reviews Section */}
           {details.reviews && details.reviews.length > 0 && (
-            <div className="mb-8">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-6 bg-gradient-to-b from-orange-500 to-red-600 rounded-full"></div>
-                  <h3 className="text-lg font-bold text-gray-800">Reviews ({processedReviews.length})</h3>
+            <div className="mb-6 sm:mb-8">
+              {/* Reviews Header - Mobile Optimized */}
+              <div className="flex flex-col gap-3 mb-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-5 sm:h-6 bg-gradient-to-b from-orange-500 to-red-600 rounded-full"></div>
+                    <h3 className="text-base sm:text-lg font-bold text-gray-800">Reviews ({processedReviews.length})</h3>
+                  </div>
+                  
+                  {/* View all reviews button */}
+                  <button
+                    onClick={() => setShowReviewsModal(true)}
+                    className="flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-1.5 sm:py-2 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-lg transition-all duration-200 font-medium text-xs sm:text-sm"
+                  >
+                    <MessageSquare className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                    <span className="hidden xs:inline">View All</span>
+                  </button>
                 </div>
                 
-                {/* View all reviews button */}
-                <button
-                  onClick={() => setShowReviewsModal(true)}
-                  className="flex items-center gap-2 px-4 py-2 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-lg transition-all duration-200 font-medium"
-                >
-                  <MessageSquare className="w-4 h-4" />
-                  View All Reviews
-                </button>
-                
-                {/* Review controls */}
-                <div className="flex items-center gap-2">
+                {/* Review controls - Stacked on mobile */}
+                <div className="flex flex-wrap items-center gap-2">
                   {/* Sort dropdown */}
-                  <div className="relative">
+                  <div className="relative flex-1 min-w-[120px]">
                     <select
                       value={reviewSortBy}
                       onChange={(e) => setReviewSortBy(e.target.value)}
-                      className="appearance-none bg-white border border-gray-300 rounded-lg px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full appearance-none bg-white border border-gray-300 rounded-lg px-3 py-2 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 pr-8"
                     >
                       <option value="newest">Newest</option>
                       <option value="oldest">Oldest</option>
-                      <option value="highest">Highest Rating</option>
-                      <option value="lowest">Lowest Rating</option>
+                      <option value="highest">Highest</option>
+                      <option value="lowest">Lowest</option>
                     </select>
                     <SortAsc className="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
                   </div>
                   
                   {/* Filter dropdown */}
-                  <div className="relative">
+                  <div className="relative flex-1 min-w-[120px]">
                     <select
                       value={reviewFilter}
                       onChange={(e) => setReviewFilter(e.target.value)}
-                      className="appearance-none bg-white border border-gray-300 rounded-lg px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full appearance-none bg-white border border-gray-300 rounded-lg px-3 py-2 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 pr-8"
                     >
                       <option value="all">All Ratings</option>
                       <option value="5">5 Stars</option>
@@ -315,16 +318,16 @@ const PlaceDetailModal = ({ place, isOpen, onClose, onFavorite, isFavorite, reco
               </div>
               
               {/* Reviews list */}
-              <div className="space-y-4">
+              <div className="space-y-3 sm:space-y-4">
                 {reviewsToShow.map((review, index) => (
-                  <div key={index} className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow">
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center gap-3">
-                        <div className="flex items-center gap-1">
+                  <div key={index} className="bg-white border border-gray-200 rounded-xl p-3 sm:p-4 shadow-sm hover:shadow-md transition-shadow active:bg-gray-50">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3 mb-2 sm:mb-3">
+                      <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+                        <div className="flex items-center gap-0.5">
                           {[...Array(5)].map((_, i) => (
                             <Star
                               key={i}
-                              className={`w-4 h-4 ${
+                              className={`w-3 h-3 sm:w-4 sm:h-4 ${
                                 i < review.rating
                                   ? 'fill-yellow-400 text-yellow-400'
                                   : 'text-gray-300'
@@ -332,22 +335,22 @@ const PlaceDetailModal = ({ place, isOpen, onClose, onFavorite, isFavorite, reco
                             />
                           ))}
                         </div>
-                        <span className="font-semibold text-sm text-gray-700">{review.author_name}</span>
-                        <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
+                        <span className="font-semibold text-xs sm:text-sm text-gray-700 truncate max-w-[120px] sm:max-w-none">{review.author_name}</span>
+                        <span className="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">
                           {new Date(review.time * 1000).toLocaleDateString('en-US')}
                         </span>
                       </div>
-                      <span className="text-sm font-medium text-gray-600">{review.rating}/5</span>
+                      <span className="text-xs sm:text-sm font-medium text-gray-600 self-start sm:self-auto">{review.rating}/5</span>
                     </div>
-                    <p className="text-sm text-gray-700 leading-relaxed">{review.text}</p>
+                    <p className="text-xs sm:text-sm text-gray-700 leading-relaxed line-clamp-4 sm:line-clamp-none">{review.text}</p>
                     
                     {/* Review helpfulness buttons */}
-                    <div className="flex items-center gap-4 mt-3 pt-3 border-t border-gray-100">
-                      <button className="flex items-center gap-1 text-xs text-gray-500 hover:text-blue-500 transition-colors">
+                    <div className="flex items-center gap-3 sm:gap-4 mt-2 sm:mt-3 pt-2 sm:pt-3 border-t border-gray-100">
+                      <button className="flex items-center gap-1 text-xs text-gray-500 hover:text-blue-500 active:text-blue-600 transition-colors py-1">
                         <span>👍</span>
                         <span>Helpful</span>
                       </button>
-                      <button className="flex items-center gap-1 text-xs text-gray-500 hover:text-red-500 transition-colors">
+                      <button className="flex items-center gap-1 text-xs text-gray-500 hover:text-red-500 active:text-red-600 transition-colors py-1">
                         <span>👎</span>
                         <span>Not Helpful</span>
                       </button>

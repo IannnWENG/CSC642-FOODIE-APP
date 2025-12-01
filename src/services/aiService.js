@@ -1,18 +1,16 @@
 class AIService {
   constructor() {
-    this.apiKey = process.env.REACT_APP_AI_API_KEY || '';
-    this.apiUrl = process.env.REACT_APP_AI_API_URL || 'https://open.bigmodel.cn/api/paas/v4/chat/completions';
-    this.model = process.env.REACT_APP_AI_MODEL || 'glm-3-turbo';    
     this.isProduction = process.env.NODE_ENV === 'production';
     this.isVercel = window.location.hostname.includes('vercel.app');
+    this.isFirebase = window.location.hostname.includes('firebaseapp.com') || 
+                      window.location.hostname.includes('web.app');
     this.proxyUrl = process.env.REACT_APP_AI_PROXY_URL || '';
     
     console.log('AI Service Initialized:', {
-      hasApiUrl: !!this.apiUrl,
-      model: this.model,
       isProduction: this.isProduction,
       isVercel: this.isVercel,
-      usingProxy: !!this.proxyUrl
+      isFirebase: this.isFirebase,
+      usingProxy: !!this.proxyUrl || this.isFirebase || this.isVercel
     });
   }
 
@@ -93,62 +91,49 @@ class AIService {
    * Build AI prompt
    */
   buildPrompt(userMessage, context) {
-    return `You are a professional restaurant menu assistant with access to detailed menu information. You help users choose dishes, understand menu items, and make informed dining decisions.
+    return `You are a helpful restaurant recommendation assistant. You have access to a list of nearby restaurants and can help users choose where to eat.
 
-Context Information:
+=== AVAILABLE RESTAURANTS ===
 ${context}
+=== END OF RESTAURANTS ===
 
-User Message: "${userMessage}"
+User's Question: "${userMessage}"
 
-Please provide a helpful and friendly response. You should:
-1. Be conversational and helpful, focusing on menu recommendations
-2. Use the available menu information to provide specific dish recommendations
-3. When discussing menu items, always mention prices, descriptions, and why you recommend them
-4. Help users understand dietary options (vegetarian, vegan, gluten-free, etc.)
-5. Suggest popular or signature dishes from the menu
-6. Provide value recommendations (best bang for buck)
-7. Consider different meal times and occasions (breakfast, lunch, dinner, date night, etc.)
-8. If asked about specific dietary needs, filter menu items accordingly
-9. Keep responses concise but informative
-10. Use emojis sparingly to make responses more engaging
-11. Support both English and Chinese conversations, respond in the same language as the user
-12. When recommending dishes, explain why they're good choices
-13. If the user asks about combinations, suggest complementary dishes
-14. Always be encouraging and positive about the dining experience
+INSTRUCTIONS:
+1. If the user asks for restaurant recommendations, ALWAYS recommend from the list above
+2. When recommending, mention the restaurant name, rating, distance, and price level
+3. Give specific reasons why you recommend each restaurant
+4. If user asks in Chinese, respond in Chinese. If in English, respond in English.
+5. Be friendly and helpful
+6. If no restaurants are available, let the user know they need to search for restaurants first
+7. You can compare restaurants and help users decide based on their preferences (price, distance, rating, etc.)
 
-Response:`;
+Your response:`;
   }
 
   /**
-   * Call actual AI API
-   * You need to implement this method according to your chosen AI service provider
+   * Call actual AI API via proxy
    */
   async callAIAPI(prompt) {
-    // Prefer proxy when configured (for GitHub Pages / any static hosting)
+    // Use external proxy if configured
     if (this.proxyUrl) {
       return await this.callViaExternalProxy(prompt);
     }
-    // Backward compatibility: Use Vercel internal proxy if on vercel domain
-    if (this.isVercel) {
+    // Use Firebase/Vercel proxy
+    if (this.isFirebase || this.isVercel) {
       return await this.callViaProxy(prompt);
     }
     
-    // Direct call in local environment
-    if (!this.apiUrl) {
-      return 'AI service not configured. Please set REACT_APP_AI_API_URL and REACT_APP_AI_API_KEY in environment variables.';
-    }
-    if (this.apiUrl.includes('zhipu') || this.apiUrl.includes('bigmodel') || this.model.includes('glm')) {
-      return await this.callGLM(prompt);
-    }
-    return 'AI service endpoint provider not supported. Please check configuration.';
+    // Local development - also use proxy
+    return await this.callViaProxy(prompt);
   }
 
   /**
-   * Call AI service via Vercel API proxy
+   * Call AI service via API proxy
    */
   async callViaProxy(prompt) {
     try {
-      console.log('🔄 Using Vercel API proxy to call AI service');
+      console.log('🔄 Using API proxy to call AI service');
       
       const response = await fetch('/api/ai-proxy', {
         method: 'POST',
@@ -205,49 +190,6 @@ Response:`;
     } catch (error) {
       console.error('External AI Proxy Error:', error);
       return `AI service temporarily unavailable: ${error.message}`;
-    }
-  }
-
-  /**
-   * GLM Zhipu AI API call
-   */
-  async callGLM(prompt) {
-    console.log('Calling GLM API with model:', this.model);
-    console.log('API Key configured:', !!this.apiKey);
-    
-    const response = await fetch(this.apiUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${this.apiKey}`
-      },
-      body: JSON.stringify({
-        model: this.model,
-        messages: [
-          {
-            role: 'user',
-            content: prompt
-          }
-        ],
-        max_tokens: 1000,
-        temperature: 0.7,
-        stream: false
-      })
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('GLM API Error:', response.status, errorText);
-      throw new Error(`GLM API error: ${response.status} - ${errorText}`);
-    }
-
-    const data = await response.json();
-    console.log('GLM API Response:', data);
-    
-    if (data.choices && data.choices[0] && data.choices[0].message) {
-      return data.choices[0].message.content;
-    } else {
-      throw new Error('Invalid response format from GLM API');
     }
   }
 

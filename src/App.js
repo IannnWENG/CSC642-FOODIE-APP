@@ -455,17 +455,20 @@ function App() {
         </div>
 
         {selectedPlace && selectedPlace.details && (
-          <div className="mt-6 bg-white rounded-lg shadow-lg p-6">
-            <h3 className="text-lg font-semibold text-gray-800 mb-4">Place Details</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <h4 className="font-semibold text-gray-700 mb-2">{selectedPlace.details.name}</h4>
-                <p className="text-gray-600 mb-2">{selectedPlace.details.formatted_address}</p>
+          <div className="mt-4 sm:mt-6 bg-white rounded-xl sm:rounded-2xl shadow-lg p-4 sm:p-6">
+            <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-3 sm:mb-4">Place Details</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+              <div className="min-w-0">
+                <h4 className="font-semibold text-gray-700 mb-2 text-sm sm:text-base truncate">{selectedPlace.details.name}</h4>
+                <p className="text-gray-600 mb-2 text-xs sm:text-sm break-words">{selectedPlace.details.formatted_address}</p>
                 
                 {selectedPlace.details.formatted_phone_number && (
-                  <p className="text-gray-600 mb-2">
-                    Phone: {selectedPlace.details.formatted_phone_number}
-                  </p>
+                  <a 
+                    href={`tel:${selectedPlace.details.formatted_phone_number}`}
+                    className="inline-flex items-center gap-2 text-gray-600 mb-2 text-xs sm:text-sm hover:text-blue-500 transition-colors"
+                  >
+                    📞 {selectedPlace.details.formatted_phone_number}
+                  </a>
                 )}
                 
                 {selectedPlace.details.website && (
@@ -473,20 +476,20 @@ function App() {
                     href={selectedPlace.details.website}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-blue-500 hover:text-blue-600"
+                    className="block text-blue-500 hover:text-blue-600 text-xs sm:text-sm truncate"
                   >
-                    Official Website
+                    🌐 Official Website
                   </a>
                 )}
               </div>
               
               <div>
                 {selectedPlace.details.opening_hours && (
-                  <div className="mb-4">
-                    <h5 className="font-medium text-gray-700 mb-2">Opening Hours</h5>
-                    <div className="text-sm text-gray-600">
+                  <div className="mb-3 sm:mb-4">
+                    <h5 className="font-medium text-gray-700 mb-2 text-xs sm:text-sm">Opening Hours</h5>
+                    <div className="text-xs sm:text-sm text-gray-600 space-y-0.5 max-h-32 sm:max-h-40 overflow-y-auto">
                       {selectedPlace.details.opening_hours.weekday_text?.map((time, index) => (
-                        <div key={index}>{convertWeekdayToEnglish(time)}</div>
+                        <div key={index} className="py-0.5">{convertWeekdayToEnglish(time)}</div>
                       ))}
                     </div>
                   </div>
@@ -494,9 +497,9 @@ function App() {
                 
                 {selectedPlace.details.reviews && selectedPlace.details.reviews.length > 0 && (
                   <div>
-                    <h5 className="font-medium text-gray-700 mb-2">Latest Reviews</h5>
-                    <div className="text-sm text-gray-600">
-                      <p className="italic">"{selectedPlace.details.reviews[0].text}"</p>
+                    <h5 className="font-medium text-gray-700 mb-2 text-xs sm:text-sm">Latest Reviews</h5>
+                    <div className="text-xs sm:text-sm text-gray-600">
+                      <p className="italic line-clamp-3">"{selectedPlace.details.reviews[0].text}"</p>
                       <p className="mt-1 text-xs text-gray-500">
                         - {selectedPlace.details.reviews[0].author_name}
                       </p>
@@ -510,42 +513,42 @@ function App() {
       </main>
 
       {/* Mobile Bottom Navigation */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-gray-200/50 z-40 sm:hidden">
-        <div className="flex items-center justify-around py-2">
+      <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-gray-200/50 z-40 sm:hidden safe-area-bottom">
+        <div className="flex items-center justify-around py-1.5">
           {isAuthenticated ? (
             <button
               onClick={logout}
-              className="flex flex-col items-center gap-1 p-3 text-gray-600 hover:text-red-500 transition-colors"
+              className="flex flex-col items-center gap-0.5 p-2 min-w-[56px] text-gray-600 hover:text-red-500 active:text-red-600 active:bg-red-50 rounded-xl transition-colors"
             >
-              <LogOut className="w-6 h-6" />
-              <span className="text-xs font-medium">Logout</span>
+              <LogOut className="w-5 h-5" />
+              <span className="text-[10px] font-medium">Logout</span>
             </button>
           ) : (
             <button
               onClick={() => setShowLogin(true)}
-              className="flex flex-col items-center gap-1 p-3 text-gray-600 hover:text-blue-500 transition-colors"
+              className="flex flex-col items-center gap-0.5 p-2 min-w-[56px] text-gray-600 hover:text-blue-500 active:text-blue-600 active:bg-blue-50 rounded-xl transition-colors"
             >
-              <LogIn className="w-6 h-6" />
-              <span className="text-xs font-medium">Login</span>
+              <LogIn className="w-5 h-5" />
+              <span className="text-[10px] font-medium">Login</span>
             </button>
           )}
           
           <button
             onClick={() => setShowAIChat(true)}
-            className="flex flex-col items-center gap-1 p-3 text-gray-600 hover:text-purple-500 transition-colors"
+            className="flex flex-col items-center gap-0.5 p-2 min-w-[56px] text-gray-600 hover:text-purple-500 active:text-purple-600 active:bg-purple-50 rounded-xl transition-colors"
           >
-            <Bot className="w-6 h-6" />
-            <span className="text-xs font-medium">AI Agent</span>
+            <Bot className="w-5 h-5" />
+            <span className="text-[10px] font-medium">AI</span>
           </button>
           
           <button
             onClick={() => setShowFavorites(true)}
-            className="relative flex flex-col items-center gap-1 p-3 text-gray-600 hover:text-red-500 transition-colors"
+            className="relative flex flex-col items-center gap-0.5 p-2 min-w-[56px] text-gray-600 hover:text-red-500 active:text-red-600 active:bg-red-50 rounded-xl transition-colors"
           >
-            <Heart className="w-6 h-6" />
-            <span className="text-xs font-medium">Favorites</span>
+            <Heart className="w-5 h-5" />
+            <span className="text-[10px] font-medium">Favorites</span>
             {favoritesCount > 0 && (
-              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-semibold">
+              <span className="absolute top-0.5 right-1 bg-red-500 text-white text-[9px] rounded-full min-w-[16px] h-4 flex items-center justify-center font-semibold px-1">
                 {favoritesCount}
               </span>
             )}
@@ -553,18 +556,18 @@ function App() {
           
           <button
             onClick={() => setShowSearchHistory(true)}
-            className="flex flex-col items-center gap-1 p-3 text-gray-600 hover:text-blue-500 transition-colors"
+            className="flex flex-col items-center gap-0.5 p-2 min-w-[56px] text-gray-600 hover:text-blue-500 active:text-blue-600 active:bg-blue-50 rounded-xl transition-colors"
           >
-            <History className="w-6 h-6" />
-            <span className="text-xs font-medium">History</span>
+            <History className="w-5 h-5" />
+            <span className="text-[10px] font-medium">History</span>
           </button>
           
           <button
             onClick={() => setShowHelp(true)}
-            className="flex flex-col items-center gap-1 p-3 text-gray-600 hover:text-green-500 transition-colors"
+            className="flex flex-col items-center gap-0.5 p-2 min-w-[56px] text-gray-600 hover:text-green-500 active:text-green-600 active:bg-green-50 rounded-xl transition-colors"
           >
-            <Info className="w-6 h-6" />
-            <span className="text-xs font-medium">Help</span>
+            <Info className="w-5 h-5" />
+            <span className="text-[10px] font-medium">Help</span>
           </button>
         </div>
       </div>
@@ -603,47 +606,52 @@ function App() {
         onClose={() => setShowHelp(false)}
       />
       {showSearchHistory && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-hidden">
-            <div className="flex items-center justify-between p-6 border-b">
-              <div className="flex items-center gap-3">
-                <History className="w-6 h-6 text-blue-500" />
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 z-50">
+          <div className="bg-white rounded-t-2xl sm:rounded-2xl w-full sm:max-w-2xl max-h-[85vh] sm:max-h-[90vh] overflow-hidden animate-slideUp sm:animate-fadeInUp">
+            <div className="flex items-center justify-between p-4 sm:p-6 border-b sticky top-0 bg-white z-10">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <div className="bg-blue-100 p-2 rounded-xl">
+                  <History className="w-5 h-5 sm:w-6 sm:h-6 text-blue-500" />
+                </div>
                 <div>
-                  <h2 className="text-xl font-bold text-gray-800">Search History</h2>
-                  <p className="text-sm text-gray-500">{searchHistoryService.getStats().totalSearches} searches</p>
+                  <h2 className="text-lg sm:text-xl font-bold text-gray-800">Search History</h2>
+                  <p className="text-xs sm:text-sm text-gray-500">{searchHistoryService.getStats().totalSearches} searches</p>
                 </div>
               </div>
               <button
                 onClick={() => setShowSearchHistory(false)}
-                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                className="p-2 hover:bg-gray-100 rounded-full transition-colors active:scale-95"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <div className="p-6 max-h-96 overflow-y-auto">
+            <div className="p-4 sm:p-6 max-h-[50vh] sm:max-h-96 overflow-y-auto overscroll-contain">
               {searchHistoryService.getHistory().length === 0 ? (
-                <div className="text-center py-8">
-                  <History className="w-12 h-12 mx-auto mb-4 text-gray-300" />
-                  <p className="text-gray-500">No search history</p>
-                  <p className="text-sm text-gray-400">Start searching for restaurants to build your history!</p>
+                <div className="text-center py-6 sm:py-8">
+                  <History className="w-10 h-10 sm:w-12 sm:h-12 mx-auto mb-3 sm:mb-4 text-gray-300" />
+                  <p className="text-gray-500 text-sm sm:text-base">No search history</p>
+                  <p className="text-xs sm:text-sm text-gray-400 mt-1">Start searching for restaurants to build your history!</p>
                 </div>
               ) : (
-                <div className="space-y-3">
+                <div className="space-y-2 sm:space-y-3">
                   {searchHistoryService.getHistory().map((record) => (
-                    <div key={record.id} className="bg-gray-50 p-4 rounded-lg">
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center gap-2">
-                          <span className="font-medium">{searchHistoryService.getTypeName(record.params.type)}</span>
-                          <span className="text-sm text-gray-500">
-                            {record.params.radius}m • {searchHistoryService.getPriceRangeName(record.params.priceRange)}
+                    <div key={record.id} className="bg-gray-50 p-3 sm:p-4 rounded-xl active:bg-gray-100 transition-colors">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 sm:gap-2 mb-2">
+                        <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                          <span className="font-medium text-sm sm:text-base">{searchHistoryService.getTypeName(record.params.type)}</span>
+                          <span className="text-xs sm:text-sm text-gray-500 bg-white px-2 py-0.5 rounded-full">
+                            {record.params.radius}m
+                          </span>
+                          <span className="text-xs sm:text-sm text-gray-500 bg-white px-2 py-0.5 rounded-full">
+                            {searchHistoryService.getPriceRangeName(record.params.priceRange)}
                           </span>
                         </div>
                         <span className="text-xs text-gray-400">
                           {searchHistoryService.formatTimestamp(record.timestamp)}
                         </span>
                       </div>
-                      <div className="text-sm text-gray-600">
+                      <div className="text-xs sm:text-sm text-gray-600">
                         Found {record.resultsCount} results
                       </div>
                     </div>
@@ -652,7 +660,7 @@ function App() {
               )}
             </div>
 
-            <div className="flex gap-3 p-6 border-t bg-gray-50">
+            <div className="flex flex-col-reverse sm:flex-row gap-2 sm:gap-3 p-4 sm:p-6 border-t bg-gray-50 safe-area-bottom">
               <button
                 onClick={() => {
                   if (window.confirm('Are you sure you want to clear all search history?')) {
@@ -660,13 +668,13 @@ function App() {
                     setShowSearchHistory(false);
                   }
                 }}
-                className="px-4 py-2 text-red-600 border border-red-300 rounded-lg hover:bg-red-50 transition-colors"
+                className="px-4 py-2.5 sm:py-2 text-red-600 border border-red-300 rounded-xl hover:bg-red-50 transition-colors text-sm sm:text-base active:scale-98"
               >
                 Clear History
               </button>
               <button
                 onClick={() => setShowSearchHistory(false)}
-                className="flex-1 px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors"
+                className="flex-1 px-4 py-2.5 sm:py-2 bg-gray-600 text-white rounded-xl hover:bg-gray-700 transition-colors text-sm sm:text-base active:scale-98"
               >
                 Close
               </button>
