@@ -272,11 +272,10 @@ function App() {
   // If not logged in, only show login/register interface
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+      <div className="min-h-screen gradient-surface">
         <LoginModal
           isOpen={showLogin}
           onClose={() => {
-            // When not logged in, cannot close, but will automatically close after login
             if (isAuthenticated) {
               setShowLogin(false);
             }
@@ -290,7 +289,6 @@ function App() {
         <RegisterModal
           isOpen={showRegister}
           onClose={() => {
-            // When not logged in, cannot close, but will automatically close after registration
             if (isAuthenticated) {
               setShowRegister(false);
             }
@@ -306,67 +304,42 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-      <header className="bg-white/80 backdrop-blur-md shadow-lg border-b border-gray-200/50 sticky top-0 z-40">
+    <div className="min-h-screen gradient-surface">
+      {/* Modern Header */}
+      <header className="glass-card border-b border-surface-200/50 sticky top-0 z-40 safe-area-top">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16 sm:h-20">
-            <div className="flex items-center gap-2 sm:gap-4">
-              <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-2 sm:p-3 rounded-xl shadow-lg">
-                <MapPin className="w-5 h-5 sm:w-7 sm:h-7 text-white" />
+          <div className="flex items-center justify-between h-14 sm:h-16">
+            {/* Logo */}
+            <div className="flex items-center gap-2.5 sm:gap-3">
+              <div className="gradient-brand p-2 sm:p-2.5 rounded-xl shadow-glow animate-float">
+                <MapPin className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
               </div>
               <div>
-                <h1 className="text-lg sm:text-2xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
-                  Restaurant Recommender
+                <h1 className="text-lg sm:text-xl font-bold font-display text-gradient-brand">
+                  Foodie Tracker
                 </h1>
-                <p className="text-xs sm:text-sm text-gray-500 font-medium hidden sm:block">AI-powered nearby food recommendations</p>
+                <p className="text-[10px] sm:text-xs text-surface-500 font-medium hidden sm:block">Discover your next favorite meal</p>
               </div>
             </div>
             
-            <div className="hidden sm:flex items-center gap-3">
-              {isAuthenticated ? (
-                <button
-                  onClick={logout}
-                  className="p-3 text-gray-600 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all duration-200 group"
-                  title="Logout"
-                >
-                  <LogOut className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                </button>
-              ) : (
-                <>
-                  <button
-                    onClick={() => setShowLogin(true)}
-                    className="px-4 py-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200 font-medium flex items-center gap-2"
-                    title="Login"
-                  >
-                    <LogIn className="w-4 h-4" />
-                    <span>Login</span>
-                  </button>
-                  <button
-                    onClick={() => setShowRegister(true)}
-                    className="px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-200 font-medium"
-                    title="Sign Up"
-                  >
-                    Sign Up
-                  </button>
-                </>
-              )}
-              
+            {/* Desktop Navigation */}
+            <nav className="hidden sm:flex items-center gap-1.5">
               <button
                 onClick={() => setShowAIChat(true)}
-                className="p-3 text-gray-600 hover:text-purple-500 hover:bg-purple-50 rounded-xl transition-all duration-200 group"
-                title="AI Restaurant Assistant"
+                className="btn-icon group"
+                title="AI Assistant"
               >
-                <Bot className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                <Bot className="w-[18px] h-[18px] group-hover:scale-110 transition-transform" />
               </button>
               
               <button
                 onClick={() => setShowFavorites(true)}
-                className="relative p-3 text-gray-600 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all duration-200 group"
-                title="My Favorites"
+                className="btn-icon group relative"
+                title="Favorites"
               >
-                <Heart className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                <Heart className="w-[18px] h-[18px] group-hover:scale-110 transition-transform" />
                 {favoritesCount > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-gradient-to-r from-red-500 to-pink-500 text-white text-xs rounded-full w-6 h-6 flex items-center justify-center font-semibold shadow-lg animate-pulse">
+                  <span className="absolute -top-1 -right-1 gradient-brand text-white text-[10px] rounded-full min-w-[18px] h-[18px] flex items-center justify-center font-bold shadow-glow">
                     {favoritesCount}
                   </span>
                 )}
@@ -374,26 +347,55 @@ function App() {
               
               <button
                 onClick={() => setShowSearchHistory(true)}
-                className="p-3 text-gray-600 hover:text-blue-500 hover:bg-blue-50 rounded-xl transition-all duration-200 group"
-                title="Search History"
+                className="btn-icon group"
+                title="History"
               >
-                <History className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                <History className="w-[18px] h-[18px] group-hover:scale-110 transition-transform" />
               </button>
               
               <button
                 onClick={() => setShowHelp(true)}
-                className="p-3 text-gray-600 hover:text-green-500 hover:bg-green-50 rounded-xl transition-all duration-200 group"
-                title="Help & Instructions"
+                className="btn-icon group"
+                title="Help"
               >
-                <Info className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                <Info className="w-[18px] h-[18px] group-hover:scale-110 transition-transform" />
               </button>
-            </div>
+
+              <div className="w-px h-6 bg-surface-200 mx-1"></div>
+              
+              {isAuthenticated ? (
+                <button
+                  onClick={logout}
+                  className="flex items-center gap-2 px-3 py-2 text-surface-600 hover:text-accent-coral hover:bg-red-50 rounded-xl transition-all text-sm font-medium"
+                  title="Logout"
+                >
+                  <LogOut className="w-4 h-4" />
+                  <span className="hidden lg:inline">Logout</span>
+                </button>
+              ) : (
+                <>
+                  <button
+                    onClick={() => setShowLogin(true)}
+                    className="btn-secondary text-sm py-2"
+                  >
+                    Login
+                  </button>
+                  <button
+                    onClick={() => setShowRegister(true)}
+                    className="btn-primary text-sm py-2"
+                  >
+                    Sign Up
+                  </button>
+                </>
+              )}
+            </nav>
           </div>
         </div>
       </header>
 
       
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-20 sm:pb-8">
+      {/* Main Content */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 pb-24 sm:pb-8">
         
         {error && (
           <ErrorMessage
@@ -411,37 +413,52 @@ function App() {
           userLocation={userLocation}
         />
 
-
-        
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
+        {/* Content Grid */}
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 sm:gap-5 lg:gap-6">
           
+          {/* Map Section */}
           <div className="xl:col-span-2 order-2 xl:order-1">
-            <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-3 sm:p-6 hover:shadow-2xl transition-all duration-300 animate-fadeInUp">
-              <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-6">
-                <div className="w-2 h-4 sm:h-6 lg:h-8 bg-gradient-to-b from-blue-500 to-purple-600 rounded-full"></div>
-                <h3 className="text-base sm:text-lg lg:text-xl font-bold text-gray-800">Interactive Map</h3>
-              </div>
-              <div className="h-64 sm:h-80 lg:h-96 xl:h-[500px] rounded-xl overflow-hidden shadow-lg">
+            <div className="card-elevated overflow-hidden animate-fadeInUp">
+              {/* Map Container - Full height, no header to maximize space */}
+              <div className="h-64 sm:h-80 lg:h-96 xl:h-[480px] relative">
                 <MapComponent
                   userLocation={userLocation}
                   recommendations={recommendations}
                   onLocationSelect={handleSelectPlace}
                   onRestaurantClick={handleRestaurantClick}
                 />
+                
+                {/* Floating Title Badge */}
+                <div className="absolute top-2 left-1/2 -translate-x-1/2 pointer-events-none">
+                  <div className="px-3 py-1.5 bg-white/90 backdrop-blur-sm rounded-full shadow-soft flex items-center gap-2">
+                    <div className="w-2 h-2 rounded-full gradient-brand" />
+                    <span className="text-xs font-semibold text-surface-700">Explore Map</span>
+                    {userLocation && (
+                      <span className="text-[10px] text-accent-mint font-medium">• Live</span>
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
 
-          
+          {/* Recommendations Section */}
           <div className="xl:col-span-1 order-1 xl:order-2">
-            <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-3 sm:p-6 hover:shadow-2xl transition-all duration-300 animate-slideInRight">
-              <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-6">
-                <div className="w-2 h-4 sm:h-6 lg:h-8 bg-gradient-to-b from-green-500 to-emerald-600 rounded-full"></div>
-                <h3 className="text-base sm:text-lg lg:text-xl font-bold text-gray-800">AI Recommendations</h3>
+            <div className="card-elevated p-3 sm:p-5 animate-fadeInUp stagger-1">
+              <div className="flex items-center justify-between mb-3 sm:mb-4">
+                <div className="flex items-center gap-2">
+                  <div className="w-1 h-5 sm:h-6 gradient-mint rounded-full"></div>
+                  <h3 className="text-sm sm:text-base font-bold font-display text-surface-800">For You</h3>
+                </div>
+                {recommendations.length > 0 && (
+                  <span className="badge badge-mint">
+                    {recommendations.length} found
+                  </span>
+                )}
               </div>
-              <div className="max-h-[300px] sm:max-h-[400px] lg:max-h-[500px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+              <div className="max-h-[280px] sm:max-h-[350px] lg:max-h-[420px] overflow-y-auto scrollbar-thin pr-1">
                 {isLoading ? (
-                  <LoadingSpinner message="Searching..." />
+                  <LoadingSpinner message="Finding places..." />
                 ) : (
                   <RecommendationList
                     recommendations={recommendations}
@@ -454,56 +471,47 @@ function App() {
           </div>
         </div>
 
+        {/* Selected Place Quick View */}
         {selectedPlace && selectedPlace.details && (
-          <div className="mt-4 sm:mt-6 bg-white rounded-xl sm:rounded-2xl shadow-lg p-4 sm:p-6">
-            <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-3 sm:mb-4">Place Details</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+          <div className="mt-4 sm:mt-5 card-elevated p-4 sm:p-5 animate-fadeInUp">
+            <div className="flex items-center gap-2 mb-3">
+              <div className="w-1 h-5 bg-accent-sky rounded-full"></div>
+              <h3 className="text-sm sm:text-base font-bold font-display text-surface-800">Quick View</h3>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="min-w-0">
-                <h4 className="font-semibold text-gray-700 mb-2 text-sm sm:text-base truncate">{selectedPlace.details.name}</h4>
-                <p className="text-gray-600 mb-2 text-xs sm:text-sm break-words">{selectedPlace.details.formatted_address}</p>
+                <h4 className="font-semibold text-surface-800 mb-1.5 text-sm sm:text-base truncate">{selectedPlace.details.name}</h4>
+                <p className="text-surface-500 mb-2 text-xs sm:text-sm break-words line-clamp-2">{selectedPlace.details.formatted_address}</p>
                 
+                <div className="flex flex-wrap gap-2 mt-3">
                 {selectedPlace.details.formatted_phone_number && (
-                  <a 
-                    href={`tel:${selectedPlace.details.formatted_phone_number}`}
-                    className="inline-flex items-center gap-2 text-gray-600 mb-2 text-xs sm:text-sm hover:text-blue-500 transition-colors"
-                  >
-                    📞 {selectedPlace.details.formatted_phone_number}
-                  </a>
+                    <a 
+                      href={`tel:${selectedPlace.details.formatted_phone_number}`}
+                      className="badge badge-sky"
+                    >
+                      📞 Call
+                    </a>
                 )}
-                
                 {selectedPlace.details.website && (
                   <a
                     href={selectedPlace.details.website}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block text-blue-500 hover:text-blue-600 text-xs sm:text-sm truncate"
+                      className="badge badge-brand"
                   >
-                    🌐 Official Website
+                      🌐 Website
                   </a>
                 )}
+                </div>
               </div>
               
               <div>
-                {selectedPlace.details.opening_hours && (
-                  <div className="mb-3 sm:mb-4">
-                    <h5 className="font-medium text-gray-700 mb-2 text-xs sm:text-sm">Opening Hours</h5>
-                    <div className="text-xs sm:text-sm text-gray-600 space-y-0.5 max-h-32 sm:max-h-40 overflow-y-auto">
-                      {selectedPlace.details.opening_hours.weekday_text?.map((time, index) => (
-                        <div key={index} className="py-0.5">{convertWeekdayToEnglish(time)}</div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-                
                 {selectedPlace.details.reviews && selectedPlace.details.reviews.length > 0 && (
-                  <div>
-                    <h5 className="font-medium text-gray-700 mb-2 text-xs sm:text-sm">Latest Reviews</h5>
-                    <div className="text-xs sm:text-sm text-gray-600">
-                      <p className="italic line-clamp-3">"{selectedPlace.details.reviews[0].text}"</p>
-                      <p className="mt-1 text-xs text-gray-500">
-                        - {selectedPlace.details.reviews[0].author_name}
+                  <div className="bg-surface-50 rounded-xl p-3">
+                    <p className="text-surface-600 text-xs sm:text-sm italic line-clamp-3">"{selectedPlace.details.reviews[0].text}"</p>
+                    <p className="mt-2 text-xs text-surface-400 font-medium">
+                      — {selectedPlace.details.reviews[0].author_name}
                       </p>
-                    </div>
                   </div>
                 )}
               </div>
@@ -512,72 +520,79 @@ function App() {
         )}
       </main>
 
-      {/* Mobile Bottom Navigation */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-gray-200/50 z-40 sm:hidden safe-area-bottom">
-        <div className="flex items-center justify-around py-1.5">
-          {isAuthenticated ? (
+      {/* Mobile Bottom Navigation - Modern Pill Style */}
+      <div className="fixed bottom-0 left-0 right-0 z-40 sm:hidden safe-area-bottom px-4 pb-2">
+        <div className="glass-card rounded-2xl shadow-soft-lg border border-white/50">
+        <div className="flex items-center justify-around py-2">
             <button
-              onClick={logout}
-              className="flex flex-col items-center gap-0.5 p-2 min-w-[56px] text-gray-600 hover:text-red-500 active:text-red-600 active:bg-red-50 rounded-xl transition-colors"
+              onClick={() => setShowAIChat(true)}
+              className="flex flex-col items-center gap-0.5 p-2.5 min-w-[52px] text-surface-500 active:text-brand-600 active:bg-brand-50 rounded-xl transition-all"
             >
-              <LogOut className="w-5 h-5" />
-              <span className="text-[10px] font-medium">Logout</span>
+              <Bot className="w-5 h-5" />
+              <span className="text-[9px] font-semibold">AI</span>
             </button>
-          ) : (
+            
             <button
-              onClick={() => setShowLogin(true)}
-              className="flex flex-col items-center gap-0.5 p-2 min-w-[56px] text-gray-600 hover:text-blue-500 active:text-blue-600 active:bg-blue-50 rounded-xl transition-colors"
-            >
-              <LogIn className="w-5 h-5" />
-              <span className="text-[10px] font-medium">Login</span>
-            </button>
-          )}
-          
-          <button
-            onClick={() => setShowAIChat(true)}
-            className="flex flex-col items-center gap-0.5 p-2 min-w-[56px] text-gray-600 hover:text-purple-500 active:text-purple-600 active:bg-purple-50 rounded-xl transition-colors"
+              onClick={() => setShowFavorites(true)}
+              className="relative flex flex-col items-center gap-0.5 p-2.5 min-w-[52px] text-surface-500 active:text-accent-coral active:bg-red-50 rounded-xl transition-all"
           >
-            <Bot className="w-5 h-5" />
-            <span className="text-[10px] font-medium">AI</span>
-          </button>
-          
-          <button
-            onClick={() => setShowFavorites(true)}
-            className="relative flex flex-col items-center gap-0.5 p-2 min-w-[56px] text-gray-600 hover:text-red-500 active:text-red-600 active:bg-red-50 rounded-xl transition-colors"
-          >
-            <Heart className="w-5 h-5" />
-            <span className="text-[10px] font-medium">Favorites</span>
+              <Heart className="w-5 h-5" />
+              <span className="text-[9px] font-semibold">Saved</span>
             {favoritesCount > 0 && (
-              <span className="absolute top-0.5 right-1 bg-red-500 text-white text-[9px] rounded-full min-w-[16px] h-4 flex items-center justify-center font-semibold px-1">
+                <span className="absolute top-1 right-2 gradient-brand text-white text-[8px] rounded-full min-w-[14px] h-[14px] flex items-center justify-center font-bold">
                 {favoritesCount}
               </span>
             )}
           </button>
           
+            {/* Center Action Button */}
           <button
-            onClick={() => setShowSearchHistory(true)}
-            className="flex flex-col items-center gap-0.5 p-2 min-w-[56px] text-gray-600 hover:text-blue-500 active:text-blue-600 active:bg-blue-50 rounded-xl transition-colors"
+              onClick={handleGetLocation}
+              disabled={isLoading}
+              className="relative -mt-4 w-14 h-14 gradient-brand rounded-2xl shadow-glow flex items-center justify-center active:scale-95 transition-transform disabled:opacity-50"
           >
-            <History className="w-5 h-5" />
-            <span className="text-[10px] font-medium">History</span>
+              <MapPin className="w-6 h-6 text-white" />
+              {isLoading && (
+                <div className="absolute inset-0 rounded-2xl border-2 border-white/30 animate-ping" />
+              )}
           </button>
           
           <button
-            onClick={() => setShowHelp(true)}
-            className="flex flex-col items-center gap-0.5 p-2 min-w-[56px] text-gray-600 hover:text-green-500 active:text-green-600 active:bg-green-50 rounded-xl transition-colors"
-          >
-            <Info className="w-5 h-5" />
-            <span className="text-[10px] font-medium">Help</span>
+              onClick={() => setShowSearchHistory(true)}
+              className="flex flex-col items-center gap-0.5 p-2.5 min-w-[52px] text-surface-500 active:text-accent-sky active:bg-sky-50 rounded-xl transition-all"
+            >
+              <History className="w-5 h-5" />
+              <span className="text-[9px] font-semibold">History</span>
+            </button>
+            
+            {isAuthenticated ? (
+              <button
+                onClick={logout}
+                className="flex flex-col items-center gap-0.5 p-2.5 min-w-[52px] text-surface-500 active:text-accent-coral active:bg-red-50 rounded-xl transition-all"
+              >
+                <LogOut className="w-5 h-5" />
+                <span className="text-[9px] font-semibold">Exit</span>
+              </button>
+            ) : (
+              <button
+                onClick={() => setShowLogin(true)}
+                className="flex flex-col items-center gap-0.5 p-2.5 min-w-[52px] text-surface-500 active:text-brand-600 active:bg-brand-50 rounded-xl transition-all"
+              >
+                <LogIn className="w-5 h-5" />
+                <span className="text-[9px] font-semibold">Login</span>
           </button>
+            )}
+          </div>
         </div>
       </div>
 
-      {/* Desktop Footer */}
-      <footer className="bg-white border-t mt-12 hidden sm:block">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="text-center text-sm text-gray-500">
-            <p>Restaurant Recommender - Powered by Google Maps API and AI recommendation technology</p>
-            <p className="mt-1">Please ensure location permissions are enabled for the best experience</p>
+      {/* Desktop Footer - Minimal */}
+      <footer className="hidden sm:block mt-8 pb-6">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <p className="text-xs text-surface-400">
+              <span className="font-semibold text-gradient-brand">Foodie Tracker</span> • Powered by AI & Google Maps
+            </p>
           </div>
         </div>
       </footer>
@@ -606,53 +621,54 @@ function App() {
         onClose={() => setShowHelp(false)}
       />
       {showSearchHistory && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 z-50">
-          <div className="bg-white rounded-t-2xl sm:rounded-2xl w-full sm:max-w-2xl max-h-[85vh] sm:max-h-[90vh] overflow-hidden animate-slideUp sm:animate-fadeInUp">
-            <div className="flex items-center justify-between p-4 sm:p-6 border-b sticky top-0 bg-white z-10">
-              <div className="flex items-center gap-2 sm:gap-3">
-                <div className="bg-blue-100 p-2 rounded-xl">
-                  <History className="w-5 h-5 sm:w-6 sm:h-6 text-blue-500" />
+        <div className="fixed inset-0 backdrop-overlay flex items-end sm:items-center justify-center p-0 sm:p-4 z-50">
+          <div className="bg-white rounded-t-3xl sm:rounded-3xl w-full sm:max-w-lg max-h-[85vh] sm:max-h-[80vh] overflow-hidden animate-slideUp sm:animate-scaleIn shadow-soft-xl">
+            {/* Header */}
+            <div className="flex items-center justify-between p-4 sm:p-5 border-b border-surface-100 sticky top-0 bg-white z-10">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 gradient-brand rounded-xl flex items-center justify-center">
+                  <History className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <h2 className="text-lg sm:text-xl font-bold text-gray-800">Search History</h2>
-                  <p className="text-xs sm:text-sm text-gray-500">{searchHistoryService.getStats().totalSearches} searches</p>
+                  <h2 className="text-base sm:text-lg font-bold font-display text-surface-800">History</h2>
+                  <p className="text-xs text-surface-400">{searchHistoryService.getStats().totalSearches} searches</p>
                 </div>
               </div>
               <button
                 onClick={() => setShowSearchHistory(false)}
-                className="p-2 hover:bg-gray-100 rounded-full transition-colors active:scale-95"
+                className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-surface-100 active:scale-95 transition-all"
               >
-                <X className="w-5 h-5" />
+                <X className="w-5 h-5 text-surface-400" />
               </button>
             </div>
 
-            <div className="p-4 sm:p-6 max-h-[50vh] sm:max-h-96 overflow-y-auto overscroll-contain">
+            {/* Content */}
+            <div className="p-4 sm:p-5 max-h-[55vh] sm:max-h-[50vh] overflow-y-auto overscroll-contain">
               {searchHistoryService.getHistory().length === 0 ? (
-                <div className="text-center py-6 sm:py-8">
-                  <History className="w-10 h-10 sm:w-12 sm:h-12 mx-auto mb-3 sm:mb-4 text-gray-300" />
-                  <p className="text-gray-500 text-sm sm:text-base">No search history</p>
-                  <p className="text-xs sm:text-sm text-gray-400 mt-1">Start searching for restaurants to build your history!</p>
+                <div className="text-center py-10">
+                  <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-surface-100 flex items-center justify-center">
+                    <History className="w-8 h-8 text-surface-300" />
+                  </div>
+                  <p className="text-surface-600 font-medium">No history yet</p>
+                  <p className="text-xs text-surface-400 mt-1">Your searches will appear here</p>
                 </div>
               ) : (
-                <div className="space-y-2 sm:space-y-3">
-                  {searchHistoryService.getHistory().map((record) => (
-                    <div key={record.id} className="bg-gray-50 p-3 sm:p-4 rounded-xl active:bg-gray-100 transition-colors">
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 sm:gap-2 mb-2">
-                        <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
-                          <span className="font-medium text-sm sm:text-base">{searchHistoryService.getTypeName(record.params.type)}</span>
-                          <span className="text-xs sm:text-sm text-gray-500 bg-white px-2 py-0.5 rounded-full">
-                            {record.params.radius}m
-                          </span>
-                          <span className="text-xs sm:text-sm text-gray-500 bg-white px-2 py-0.5 rounded-full">
-                            {searchHistoryService.getPriceRangeName(record.params.priceRange)}
-                          </span>
-                        </div>
-                        <span className="text-xs text-gray-400">
+                <div className="space-y-2">
+                  {searchHistoryService.getHistory().map((record, index) => (
+                    <div 
+                      key={record.id} 
+                      className="bg-surface-50 p-3 rounded-xl card-interactive"
+                      style={{ animationDelay: `${index * 0.05}s` }}
+                    >
+                      <div className="flex items-center justify-between mb-1.5">
+                        <span className="font-semibold text-sm text-surface-700">{searchHistoryService.getTypeName(record.params.type)}</span>
+                        <span className="text-[10px] text-surface-400">
                           {searchHistoryService.formatTimestamp(record.timestamp)}
                         </span>
                       </div>
-                      <div className="text-xs sm:text-sm text-gray-600">
-                        Found {record.resultsCount} results
+                      <div className="flex flex-wrap items-center gap-1.5">
+                        <span className="badge badge-brand text-[10px]">{record.params.radius}m</span>
+                        <span className="badge badge-mint text-[10px]">{record.resultsCount} found</span>
                       </div>
                     </div>
                   ))}
@@ -660,23 +676,24 @@ function App() {
               )}
             </div>
 
-            <div className="flex flex-col-reverse sm:flex-row gap-2 sm:gap-3 p-4 sm:p-6 border-t bg-gray-50 safe-area-bottom">
+            {/* Footer */}
+            <div className="flex gap-2 p-4 sm:p-5 border-t border-surface-100 bg-surface-50 safe-area-bottom">
               <button
                 onClick={() => {
-                  if (window.confirm('Are you sure you want to clear all search history?')) {
+                  if (window.confirm('Clear all history?')) {
                     searchHistoryService.clearHistory();
                     setShowSearchHistory(false);
                   }
                 }}
-                className="px-4 py-2.5 sm:py-2 text-red-600 border border-red-300 rounded-xl hover:bg-red-50 transition-colors text-sm sm:text-base active:scale-98"
+                className="btn-secondary flex-1 py-2.5 text-accent-coral border-accent-coral/30 hover:bg-red-50 text-sm"
               >
-                Clear History
+                Clear
               </button>
               <button
                 onClick={() => setShowSearchHistory(false)}
-                className="flex-1 px-4 py-2.5 sm:py-2 bg-gray-600 text-white rounded-xl hover:bg-gray-700 transition-colors text-sm sm:text-base active:scale-98"
+                className="btn-primary flex-1 py-2.5 text-sm"
               >
-                Close
+                Done
               </button>
             </div>
           </div>

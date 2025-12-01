@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { MapPin, Search, Filter, RefreshCw, X, Clock } from 'lucide-react';
+import { MapPin, Search, Filter, RefreshCw, X, Clock, Navigation, Utensils, Coffee, Cake } from 'lucide-react';
 import googleMapsService from '../services/googleMapsService';
 
 const LocationControls = ({ 
@@ -17,7 +17,7 @@ const LocationControls = ({
   const [searchQuery, setSearchQuery] = useState('');
   const [searchSuggestions, setSearchSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
-  const [searchMode, setSearchMode] = useState('nearby'); // 'nearby' or 'text'
+  const [searchMode, setSearchMode] = useState('nearby');
   const [recentSearches, setRecentSearches] = useState([]);
   
   const searchInputRef = useRef(null);
@@ -34,7 +34,6 @@ const LocationControls = ({
   const handleTextSearch = () => {
     if (!searchQuery.trim()) return;
     
-    // Add to recent searches
     const newRecentSearches = [searchQuery, ...recentSearches.filter(s => s !== searchQuery)].slice(0, 5);
     setRecentSearches(newRecentSearches);
     localStorage.setItem('recentSearches', JSON.stringify(newRecentSearches));
@@ -108,238 +107,243 @@ const LocationControls = ({
     };
   }, []);
 
-  const getLocationText = () => {
-    if (!userLocation) return 'Location not obtained yet';
-    return `Lat: ${userLocation.lat.toFixed(4)}, Lng: ${userLocation.lng.toFixed(4)}`;
-  };
+  // Place type options with icons
+  const placeTypes = [
+    { value: 'restaurant', label: 'Restaurant', icon: Utensils },
+    { value: 'cafe', label: 'Cafe', icon: Coffee },
+    { value: 'bakery', label: 'Bakery', icon: Cake },
+    { value: 'meal_takeaway', label: 'Takeaway', icon: Utensils },
+  ];
+
+  // Radius options
+  const radiusOptions = [
+    { value: 500, label: '500m' },
+    { value: 1000, label: '1 km' },
+    { value: 2000, label: '2 km' },
+    { value: 5000, label: '5 km' },
+  ];
 
   return (
-    <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-4 sm:p-6 lg:p-8 mb-6 sm:mb-8 hover:shadow-2xl transition-all duration-300">
-      <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
-        <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-2 rounded-xl">
-          <MapPin className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
-        </div>
-        <h2 className="text-lg sm:text-xl lg:text-2xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
-          Location & Search Settings
-        </h2>
-      </div>
-
-      {/* Location information */}
-      <div className="mb-4 sm:mb-6 p-3 sm:p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl border border-blue-100">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
-          <div className="flex-1 min-w-0">
-            <p className="text-xs sm:text-sm font-medium text-gray-600 mb-1">Current Location</p>
-            <p className="text-xs sm:text-sm font-semibold text-gray-800 bg-white/50 px-2 sm:px-3 py-1 rounded-lg truncate">
-              {getLocationText()}
+    <div className="card-elevated p-4 sm:p-5 mb-4 sm:mb-5 animate-fadeInUp">
+      {/* Header with Location Status */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+        <div className="flex items-center gap-3">
+          <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${userLocation ? 'gradient-mint' : 'bg-surface-200'}`}>
+            {isLoading ? (
+              <RefreshCw className="w-5 h-5 text-white animate-spin" />
+            ) : (
+              <Navigation className={`w-5 h-5 ${userLocation ? 'text-white' : 'text-surface-400'}`} />
+            )}
+          </div>
+          <div>
+            <h2 className="text-sm sm:text-base font-bold font-display text-surface-800">
+              {userLocation ? 'Location Found' : 'Find Nearby'}
+            </h2>
+            <p className="text-xs text-surface-400">
+              {userLocation 
+                ? `${userLocation.lat.toFixed(4)}, ${userLocation.lng.toFixed(4)}`
+                : 'Enable location to discover places'
+              }
             </p>
           </div>
+        </div>
+        
+        {!userLocation && (
           <button
             onClick={onGetLocation}
             disabled={isLoading}
-            className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl hover:from-blue-600 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 text-sm sm:text-base"
+            className="btn-primary py-2.5 px-4 text-sm w-full sm:w-auto"
           >
-            {isLoading ? (
-              <RefreshCw className="w-4 h-4 sm:w-5 sm:h-5 animate-spin" />
-            ) : (
-              <MapPin className="w-4 h-4 sm:w-5 sm:h-5" />
-            )}
-            {isLoading ? 'Getting...' : 'Get Location'}
+            {isLoading ? 'Getting...' : 'Get My Location'}
           </button>
-        </div>
+        )}
       </div>
 
-      {/* Search mode toggle */}
-      <div className="mb-6">
-        <div className="flex items-center gap-2 mb-4">
-          <div className="w-2 h-6 bg-gradient-to-b from-green-500 to-emerald-600 rounded-full"></div>
-          <h3 className="text-lg font-bold text-gray-800">Search Mode</h3>
-        </div>
-        <div className="flex bg-gray-100 rounded-xl p-1">
-          <button
-            onClick={() => setSearchMode('nearby')}
-            className={`flex-1 py-2 px-4 rounded-lg font-medium transition-all duration-200 ${
-              searchMode === 'nearby'
-                ? 'bg-white text-blue-600 shadow-sm'
-                : 'text-gray-600 hover:text-gray-800'
-            }`}
-          >
-            Nearby Search
-          </button>
-          <button
-            onClick={() => setSearchMode('text')}
-            className={`flex-1 py-2 px-4 rounded-lg font-medium transition-all duration-200 ${
-              searchMode === 'text'
-                ? 'bg-white text-blue-600 shadow-sm'
-                : 'text-gray-600 hover:text-gray-800'
-            }`}
-          >
-            Text Search
-          </button>
-        </div>
+      {/* Search Mode Toggle - Pill Style */}
+      <div className="flex p-1 bg-surface-100 rounded-xl mb-4">
+        <button
+          onClick={() => setSearchMode('nearby')}
+          className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium transition-all ${
+            searchMode === 'nearby'
+              ? 'bg-white text-brand-600 shadow-soft'
+              : 'text-surface-500 hover:text-surface-700'
+          }`}
+        >
+          Nearby
+        </button>
+        <button
+          onClick={() => setSearchMode('text')}
+          className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium transition-all ${
+            searchMode === 'text'
+              ? 'bg-white text-brand-600 shadow-soft'
+              : 'text-surface-500 hover:text-surface-700'
+          }`}
+        >
+          Search
+        </button>
       </div>
 
-      {/* Text search input */}
+      {/* Text Search Input */}
       {searchMode === 'text' && (
-        <div className="mb-6">
-          <div className="flex items-center gap-2 mb-4">
-            <div className="w-2 h-6 bg-gradient-to-b from-purple-500 to-pink-600 rounded-full"></div>
-            <h3 className="text-lg font-bold text-gray-800">Search Restaurants</h3>
+        <div className="mb-4" ref={searchInputRef}>
+          <div className="relative">
+            <Search className="absolute left-3.5 top-1/2 transform -translate-y-1/2 w-4 h-4 text-surface-400" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={handleInputChange}
+              onKeyPress={(e) => e.key === 'Enter' && handleTextSearch()}
+              placeholder="Search restaurants, cafes..."
+              className="input-modern pl-10 pr-10"
+            />
+            {searchQuery && (
+              <button
+                onClick={clearSearch}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 w-6 h-6 flex items-center justify-center rounded-full hover:bg-surface-100 transition-colors"
+              >
+                <X className="w-4 h-4 text-surface-400" />
+              </button>
+            )}
           </div>
-          <div className="relative" ref={searchInputRef}>
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={handleInputChange}
-                onKeyPress={(e) => e.key === 'Enter' && handleTextSearch()}
-                placeholder="Enter restaurant name or address..."
-                className="w-full pl-10 pr-10 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white/50 backdrop-blur-sm text-base"
-              />
-              {searchQuery && (
-                <button
-                  onClick={clearSearch}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                >
-                  <X className="w-5 h-5" />
-                </button>
+          
+          {/* Suggestions Dropdown */}
+          {showSuggestions && (searchSuggestions.length > 0 || recentSearches.length > 0) && (
+            <div className="absolute left-4 right-4 mt-2 bg-white rounded-2xl shadow-soft-lg border border-surface-100 z-50 max-h-72 overflow-y-auto animate-fadeIn">
+              {recentSearches.length > 0 && (
+                <div className="p-3 border-b border-surface-100">
+                  <div className="flex items-center gap-2 text-xs font-semibold text-surface-400 mb-2 uppercase tracking-wide">
+                    <Clock className="w-3 h-3" />
+                    Recent
+                  </div>
+                  {recentSearches.map((search, index) => (
+                    <button
+                      key={index}
+                      onClick={() => {
+                        setSearchQuery(search);
+                        setShowSuggestions(false);
+                      }}
+                      className="w-full text-left px-3 py-2 text-sm text-surface-600 hover:bg-surface-50 rounded-lg transition-colors"
+                    >
+                      {search}
+                    </button>
+                  ))}
+                </div>
+              )}
+              
+              {searchSuggestions.length > 0 && (
+                <div className="p-3">
+                  <div className="text-xs font-semibold text-surface-400 mb-2 uppercase tracking-wide">Suggestions</div>
+                  {searchSuggestions.slice(0, 5).map((suggestion, index) => (
+                    <button
+                      key={index}
+                      onClick={() => handleSuggestionClick(suggestion)}
+                      className="w-full text-left px-3 py-2.5 hover:bg-surface-50 rounded-lg transition-colors"
+                    >
+                      <div className="font-medium text-sm text-surface-700">{suggestion.structured_formatting?.main_text || suggestion.description}</div>
+                      {suggestion.structured_formatting?.secondary_text && (
+                        <div className="text-xs text-surface-400 mt-0.5">{suggestion.structured_formatting.secondary_text}</div>
+                      )}
+                    </button>
+                  ))}
+                </div>
               )}
             </div>
-            
-            {/* Search suggestions */}
-            {showSuggestions && (searchSuggestions.length > 0 || recentSearches.length > 0) && (
-              <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-xl border border-gray-200 z-50 max-h-80 overflow-y-auto">
-                {recentSearches.length > 0 && (
-                  <div className="p-3 border-b border-gray-100">
-                    <div className="flex items-center gap-2 text-sm font-medium text-gray-500 mb-2">
-                      <Clock className="w-4 h-4" />
-                      Recent Searches
-                    </div>
-                    {recentSearches.map((search, index) => (
-                      <button
-                        key={index}
-                        onClick={() => {
-                          setSearchQuery(search);
-                          setShowSuggestions(false);
-                        }}
-                        className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
-                      >
-                        {search}
-                      </button>
-                    ))}
-                  </div>
-                )}
-                
-                {searchSuggestions.length > 0 && (
-                  <div className="p-3">
-                    <div className="text-sm font-medium text-gray-500 mb-2">Suggestions</div>
-                    {searchSuggestions.slice(0, 5).map((suggestion, index) => (
-                      <button
-                        key={index}
-                        onClick={() => handleSuggestionClick(suggestion)}
-                        className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
-                      >
-                        <div className="font-medium">{suggestion.structured_formatting?.main_text || suggestion.description}</div>
-                        {suggestion.structured_formatting?.secondary_text && (
-                          <div className="text-xs text-gray-500 mt-1">{suggestion.structured_formatting.secondary_text}</div>
-                        )}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
+          )}
+        </div>
+      )}
+
+      {/* Quick Type Selection - Scrollable Pills */}
+      {searchMode === 'nearby' && (
+        <div className="mb-4">
+          <label className="block text-xs font-semibold text-surface-500 mb-2 uppercase tracking-wide">Type</label>
+          <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0">
+            {placeTypes.map((type) => {
+              const Icon = type.icon;
+              return (
+                <button
+                  key={type.value}
+                  onClick={() => setPlaceType(type.value)}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-all flex-shrink-0 ${
+                    placeType === type.value
+                      ? 'gradient-brand text-white shadow-glow'
+                      : 'bg-surface-100 text-surface-600 hover:bg-surface-200'
+                  }`}
+                >
+                  <Icon className="w-4 h-4" />
+                  {type.label}
+                </button>
+              );
+            })}
           </div>
         </div>
       )}
 
-      {/* Search settings */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-6 mb-4 sm:mb-6">
-        {/* Search radius */}
+      {/* Filters Row */}
+      <div className="grid grid-cols-2 gap-3 mb-4">
+        {/* Radius */}
         <div>
-          <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-2 sm:mb-3">
-            Search Radius
-          </label>
-          <select
-            value={searchRadius}
-            onChange={(e) => setSearchRadius(Number(e.target.value))}
-            className="w-full p-2 sm:p-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white/50 backdrop-blur-sm text-sm sm:text-base"
-          >
-            <option value={500}>500 meters</option>
-            <option value={1000}>1 km</option>
-            <option value={2000}>2 km</option>
-            <option value={5000}>5 km</option>
-          </select>
+          <label className="block text-xs font-semibold text-surface-500 mb-2 uppercase tracking-wide">Distance</label>
+          <div className="flex gap-1.5 flex-wrap">
+            {radiusOptions.map((opt) => (
+              <button
+                key={opt.value}
+                onClick={() => setSearchRadius(opt.value)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                  searchRadius === opt.value
+                    ? 'bg-brand-100 text-brand-700 ring-1 ring-brand-200'
+                    : 'bg-surface-100 text-surface-600 hover:bg-surface-200'
+                }`}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
         </div>
 
-        {/* Place type */}
+        {/* Price Range */}
         <div>
-          <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-2 sm:mb-3">
-            Place Type
-          </label>
-          <select
-            value={placeType}
-            onChange={(e) => setPlaceType(e.target.value)}
-            className="w-full p-2 sm:p-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white/50 backdrop-blur-sm text-sm sm:text-base"
-          >
-            <option value="restaurant">Restaurant</option>
-            <option value="cafe">Cafe</option>
-            <option value="meal_takeaway">Takeaway</option>
-            <option value="food">Food</option>
-            <option value="bakery">Bakery</option>
-          </select>
-        </div>
-
-        {/* Price range */}
-        <div>
-          <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-2 sm:mb-3">
-            Price Range
-          </label>
-          <select
-            value={priceRange}
-            onChange={(e) => setPriceRange(e.target.value)}
-            className="w-full p-2 sm:p-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white/50 backdrop-blur-sm text-sm sm:text-base"
-          >
-            <option value="all">Any</option>
-            <option value="low">$ (Budget)</option>
-            <option value="medium">$$ (Moderate)</option>
-            <option value="high">$$$ (Expensive)</option>
-          </select>
+          <label className="block text-xs font-semibold text-surface-500 mb-2 uppercase tracking-wide">Price</label>
+          <div className="flex gap-1.5">
+            {[
+              { value: 'all', label: 'All' },
+              { value: 'low', label: '$' },
+              { value: 'medium', label: '$$' },
+              { value: 'high', label: '$$$' },
+            ].map((opt) => (
+              <button
+                key={opt.value}
+                onClick={() => setPriceRange(opt.value)}
+                className={`flex-1 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                  priceRange === opt.value
+                    ? 'bg-accent-mint/10 text-accent-mint ring-1 ring-accent-mint/20'
+                    : 'bg-surface-100 text-surface-600 hover:bg-surface-200'
+                }`}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
-      {/* Search button */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
-        <div className="flex items-center gap-2 sm:gap-3 text-xs sm:text-sm text-gray-600 bg-gray-50/50 px-3 sm:px-4 py-2 rounded-xl w-full sm:w-auto">
-          <Filter className="w-3 h-3 sm:w-4 sm:h-4 text-blue-500 flex-shrink-0" />
-          <span className="font-medium text-center sm:text-left">
-            {searchMode === 'nearby' 
-              ? 'AI recommendations will be sorted by rating, distance, price, and other factors'
-              : 'Search for specific restaurants by name or address'
-            }
-          </span>
-        </div>
-        
-        {searchMode === 'nearby' ? (
-          <button
-            onClick={handleSearch}
-            disabled={isLoading || !userLocation}
-            className="w-full sm:w-auto flex items-center justify-center gap-2 sm:gap-3 px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl hover:from-green-600 hover:to-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 font-semibold text-sm sm:text-base"
-          >
-            <Search className="w-4 h-4 sm:w-5 sm:h-5" />
-            Search Nearby
-          </button>
+      {/* Search Button */}
+      <button
+        onClick={searchMode === 'nearby' ? handleSearch : handleTextSearch}
+        disabled={isLoading || (searchMode === 'nearby' ? !userLocation : !searchQuery.trim())}
+        className="w-full btn-primary py-3 text-sm flex items-center justify-center gap-2"
+      >
+        {isLoading ? (
+          <>
+            <RefreshCw className="w-4 h-4 animate-spin" />
+            Searching...
+          </>
         ) : (
-          <button
-            onClick={handleTextSearch}
-            disabled={isLoading || !searchQuery.trim()}
-            className="w-full sm:w-auto flex items-center justify-center gap-2 sm:gap-3 px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-purple-500 to-pink-600 text-white rounded-xl hover:from-purple-600 hover:to-pink-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 font-semibold text-sm sm:text-base"
-          >
-            <Search className="w-4 h-4 sm:w-5 sm:h-5" />
-            Search Restaurants
-          </button>
+          <>
+            <Search className="w-4 h-4" />
+            {searchMode === 'nearby' ? 'Find Places' : 'Search'}
+          </>
         )}
-      </div>
+      </button>
     </div>
   );
 };

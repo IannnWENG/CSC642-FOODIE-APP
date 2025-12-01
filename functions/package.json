@@ -1,6 +1,6 @@
 {
-  "name": "restaurant-recommender-functions",
-  "description": "Cloud Functions for Restaurant Recommender AI Proxy",
+  "name": "foodie-tracker-functions",
+  "description": "Cloud Functions for Foodie Tracker AI Proxy",
   "scripts": {
     "serve": "firebase emulators:start --only functions",
     "shell": "firebase functions:shell",

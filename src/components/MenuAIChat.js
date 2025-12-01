@@ -97,28 +97,28 @@ const MenuAIChat = ({ place, menu, recommendations, userLocation }) => {
   };
 
   return (
-    <div className={`bg-white border border-gray-200 rounded-xl transition-all duration-300 ${
-      isExpanded ? 'h-96' : 'h-16'
+    <div className={`bg-white border border-gray-200 rounded-xl transition-all duration-300 overflow-hidden ${
+      isExpanded ? 'max-h-[500px] sm:max-h-96' : 'max-h-14 sm:max-h-16'
     }`}>
       {/* Header */}
       <div 
-        className="flex items-center justify-between p-4 cursor-pointer hover:bg-gray-50 transition-colors"
+        className="flex items-center justify-between p-3 sm:p-4 cursor-pointer hover:bg-gray-50 active:bg-gray-100 transition-colors"
         onClick={() => setIsExpanded(!isExpanded)}
       >
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-600 rounded-full flex items-center justify-center">
-            <Bot className="w-4 h-4 text-white" />
+        <div className="flex items-center gap-2 sm:gap-3">
+          <div className="w-7 h-7 sm:w-8 sm:h-8 bg-gradient-to-r from-purple-500 to-pink-600 rounded-full flex items-center justify-center flex-shrink-0">
+            <Bot className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
           </div>
-          <div>
-            <h3 className="font-semibold text-gray-800">AI Menu Assistant</h3>
-            <p className="text-sm text-gray-500">
-              {isExpanded ? 'Ask me about the menu!' : 'Click to chat about menu items'}
+          <div className="min-w-0">
+            <h3 className="font-semibold text-gray-800 text-sm sm:text-base">AI Menu Assistant</h3>
+            <p className="text-xs sm:text-sm text-gray-500 truncate">
+              {isExpanded ? 'Ask me about the menu!' : 'Tap to chat'}
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          <Sparkles className="w-4 h-4 text-purple-500" />
-          <div className={`transform transition-transform ${isExpanded ? 'rotate-180' : ''}`}>
+        <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
+          <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-purple-500" />
+          <div className={`transform transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`}>
             <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
             </svg>
@@ -128,38 +128,44 @@ const MenuAIChat = ({ place, menu, recommendations, userLocation }) => {
 
       {/* Chat Area */}
       {isExpanded && (
-        <>
-          {/* Messages */}
-          <div className="flex-1 overflow-y-auto max-h-64 p-4 space-y-4">
+        <div className="flex flex-col" style={{ height: 'calc(100% - 56px)' }}>
+          {/* Messages - Smooth scrolling */}
+          <div 
+            className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-3 sm:space-y-4 overscroll-contain"
+            style={{ 
+              maxHeight: messages.length <= 1 ? '120px' : '200px',
+              WebkitOverflowScrolling: 'touch'
+            }}
+          >
             {messages.map((message) => (
               <div
                 key={message.id}
                 className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
               >
-                <div className={`flex items-start gap-2 max-w-[80%] ${
+                <div className={`flex items-start gap-1.5 sm:gap-2 max-w-[88%] sm:max-w-[80%] ${
                   message.type === 'user' ? 'flex-row-reverse' : 'flex-row'
                 }`}>
-                  <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ${
+                  <div className={`w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center flex-shrink-0 ${
                     message.type === 'user' 
                       ? 'bg-blue-500' 
                       : 'bg-gradient-to-r from-purple-500 to-pink-600'
                   }`}>
                     {message.type === 'user' ? (
-                      <User className="w-3 h-3 text-white" />
+                      <User className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-white" />
                     ) : (
-                      <Bot className="w-3 h-3 text-white" />
+                      <Bot className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-white" />
                     )}
                   </div>
-                  <div className={`rounded-lg px-3 py-2 ${
+                  <div className={`rounded-xl px-2.5 sm:px-3 py-2 ${
                     message.type === 'user'
                       ? 'bg-blue-500 text-white'
                       : 'bg-gray-100 text-gray-800'
                   }`}>
-                    <p className="text-sm whitespace-pre-wrap">{message.content}</p>
-                    <p className={`text-xs mt-1 ${
+                    <p className="text-xs sm:text-sm whitespace-pre-wrap leading-relaxed">{message.content}</p>
+                    <p className={`text-[10px] sm:text-xs mt-1 ${
                       message.type === 'user' ? 'text-blue-100' : 'text-gray-500'
                     }`}>
-                      {message.timestamp.toLocaleTimeString()}
+                      {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </p>
                   </div>
                 </div>
@@ -168,14 +174,14 @@ const MenuAIChat = ({ place, menu, recommendations, userLocation }) => {
             
             {isLoading && (
               <div className="flex justify-start">
-                <div className="flex items-start gap-2">
-                  <div className="w-6 h-6 rounded-full bg-gradient-to-r from-purple-500 to-pink-600 flex items-center justify-center">
-                    <Bot className="w-3 h-3 text-white" />
+                <div className="flex items-start gap-1.5 sm:gap-2">
+                  <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-gradient-to-r from-purple-500 to-pink-600 flex items-center justify-center">
+                    <Bot className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-white" />
                   </div>
-                  <div className="bg-gray-100 rounded-lg px-3 py-2">
-                    <div className="flex items-center gap-2">
+                  <div className="bg-gray-100 rounded-xl px-2.5 sm:px-3 py-2">
+                    <div className="flex items-center gap-1.5 sm:gap-2">
                       <Loader2 className="w-3 h-3 animate-spin" />
-                      <span className="text-sm text-gray-600">AI is thinking...</span>
+                      <span className="text-xs sm:text-sm text-gray-600">Thinking...</span>
                     </div>
                   </div>
                 </div>
@@ -185,16 +191,16 @@ const MenuAIChat = ({ place, menu, recommendations, userLocation }) => {
             <div ref={messagesEndRef} />
           </div>
 
-          {/* Quick Questions */}
+          {/* Quick Questions - Horizontal scroll on mobile */}
           {messages.length <= 1 && (
-            <div className="p-4 border-t border-gray-200">
-              <p className="text-sm text-gray-600 mb-3">Quick questions:</p>
-              <div className="flex flex-wrap gap-2">
+            <div className="px-3 sm:px-4 py-2 sm:py-3 border-t border-gray-100">
+              <p className="text-xs text-gray-500 mb-2">Quick questions:</p>
+              <div className="flex gap-1.5 sm:gap-2 overflow-x-auto pb-1 -mx-3 px-3 sm:mx-0 sm:px-0 scrollbar-hide">
                 {quickQuestions.map((question, index) => (
                   <button
                     key={index}
                     onClick={() => handleQuickQuestion(question)}
-                    className="px-3 py-1 text-xs bg-purple-50 text-purple-600 rounded-full hover:bg-purple-100 transition-colors"
+                    className="flex-shrink-0 px-2.5 sm:px-3 py-1.5 text-[11px] sm:text-xs bg-purple-50 text-purple-600 rounded-full hover:bg-purple-100 active:bg-purple-200 transition-colors whitespace-nowrap"
                   >
                     {question}
                   </button>
@@ -203,22 +209,22 @@ const MenuAIChat = ({ place, menu, recommendations, userLocation }) => {
             </div>
           )}
 
-          {/* Input Area */}
-          <div className="p-4 border-t border-gray-200">
+          {/* Input Area - Fixed at bottom */}
+          <div className="p-2.5 sm:p-4 border-t border-gray-200 bg-white">
             <div className="flex gap-2">
               <input
                 type="text"
                 value={inputMessage}
                 onChange={(e) => setInputMessage(e.target.value)}
                 onKeyPress={handleKeyPress}
-                placeholder="Ask about menu items, recommendations, or dietary preferences..."
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm"
+                placeholder="Ask about the menu..."
+                className="flex-1 px-3 py-2.5 sm:py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm bg-gray-50 focus:bg-white transition-colors"
                 disabled={isLoading}
               />
               <button
                 onClick={handleSendMessage}
                 disabled={!inputMessage.trim() || isLoading}
-                className="px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-600 text-white rounded-lg hover:from-purple-600 hover:to-pink-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center gap-2"
+                className="p-2.5 sm:px-4 sm:py-2 bg-gradient-to-r from-purple-500 to-pink-600 text-white rounded-xl hover:from-purple-600 hover:to-pink-700 active:from-purple-700 active:to-pink-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center justify-center"
               >
                 {isLoading ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
@@ -228,7 +234,7 @@ const MenuAIChat = ({ place, menu, recommendations, userLocation }) => {
               </button>
             </div>
           </div>
-        </>
+        </div>
       )}
     </div>
   );

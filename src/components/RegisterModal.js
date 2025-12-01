@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Mail, Lock, User, UserPlus } from 'lucide-react';
+import { X, Mail, Lock, User, UserPlus, Sparkles } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 
 const RegisterModal = ({ isOpen, onClose, onSwitchToLogin, canClose = true }) => {
@@ -53,53 +53,57 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin, canClose = true }) =>
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 z-50" style={{ zIndex: 9999 }}>
-      <div className="bg-white rounded-t-2xl sm:rounded-2xl w-full sm:max-w-md shadow-xl animate-slideUp sm:animate-fadeInUp max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 backdrop-overlay flex items-end sm:items-center justify-center p-0 sm:p-4 z-50" style={{ zIndex: 9999 }}>
+      <div className="bg-white rounded-t-3xl sm:rounded-3xl w-full sm:max-w-md shadow-soft-xl animate-slideUp sm:animate-scaleIn max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="flex items-center justify-between p-4 sm:p-6 border-b sticky top-0 bg-white z-10">
-          <div className="flex items-center gap-2 sm:gap-3">
-            <div className="bg-gradient-to-r from-green-500 to-emerald-600 p-2 rounded-xl">
-              <UserPlus className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+        <div className="relative p-6 pb-4">
+          {/* Decorative Background */}
+          <div className="absolute top-0 left-0 right-0 h-24 gradient-mint rounded-t-3xl opacity-20 -z-10" />
+          
+          <div className="flex items-center justify-between mb-6">
+            <div className="w-12 h-12 gradient-mint rounded-2xl flex items-center justify-center shadow-glow-mint">
+              <Sparkles className="w-6 h-6 text-white" />
             </div>
-            <div>
-              <h2 className="text-xl sm:text-2xl font-bold text-gray-800">Sign Up</h2>
-              <p className="text-xs sm:text-sm text-gray-500">Create a new account</p>
-            </div>
+            {canClose && (
+              <button
+                onClick={onClose}
+                className="w-8 h-8 flex items-center justify-center rounded-full bg-white/80 hover:bg-white shadow-soft active:scale-95 transition-all"
+              >
+                <X className="w-4 h-4 text-surface-500" />
+              </button>
+            )}
           </div>
-          {canClose && (
-            <button
-              onClick={onClose}
-              className="p-2 hover:bg-gray-100 rounded-full transition-colors active:scale-95"
-            >
-              <X className="w-5 h-5" />
-            </button>
-          )}
+          
+          <div>
+            <h2 className="text-2xl font-bold font-display text-surface-800">Create account</h2>
+            <p className="text-sm text-surface-500 mt-1">Start discovering amazing food spots</p>
+          </div>
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-3 sm:space-y-4 safe-area-bottom">
+        <form onSubmit={handleSubmit} className="p-6 pt-2 space-y-3 safe-area-bottom">
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-3 sm:px-4 py-2 sm:py-3 rounded-xl text-xs sm:text-sm">
+            <div className="bg-red-50 border border-red-100 text-red-600 px-4 py-3 rounded-xl text-sm animate-fadeIn">
               {error}
             </div>
           )}
 
           {/* Name Field */}
           <div>
-            <label htmlFor="register-name" className="block text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
+            <label htmlFor="register-name" className="block text-xs font-semibold text-surface-500 mb-2 uppercase tracking-wide">
               Name
             </label>
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <User className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
+              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                <User className="h-4 w-4 text-surface-400" />
               </div>
               <input
                 id="register-name"
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="block w-full pl-9 sm:pl-10 pr-3 py-2.5 sm:py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm sm:text-base"
-                placeholder="Enter your name"
+                className="input-modern pl-10"
+                placeholder="Your name"
                 required
                 disabled={isLoading}
                 autoComplete="name"
@@ -109,20 +113,20 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin, canClose = true }) =>
 
           {/* Email Field */}
           <div>
-            <label htmlFor="register-email" className="block text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
+            <label htmlFor="register-email" className="block text-xs font-semibold text-surface-500 mb-2 uppercase tracking-wide">
               Email
             </label>
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Mail className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
+              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                <Mail className="h-4 w-4 text-surface-400" />
               </div>
               <input
                 id="register-email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="block w-full pl-9 sm:pl-10 pr-3 py-2.5 sm:py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm sm:text-base"
-                placeholder="example@email.com"
+                className="input-modern pl-10"
+                placeholder="you@example.com"
                 required
                 disabled={isLoading}
                 autoComplete="email"
@@ -132,45 +136,44 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin, canClose = true }) =>
 
           {/* Password Field */}
           <div>
-            <label htmlFor="register-password" className="block text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
+            <label htmlFor="register-password" className="block text-xs font-semibold text-surface-500 mb-2 uppercase tracking-wide">
               Password
             </label>
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Lock className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
+              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                <Lock className="h-4 w-4 text-surface-400" />
               </div>
               <input
                 id="register-password"
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="block w-full pl-9 sm:pl-10 pr-3 py-2.5 sm:py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm sm:text-base"
-                placeholder="At least 6 characters"
+                className="input-modern pl-10"
+                placeholder="Min. 6 characters"
                 required
                 minLength={6}
                 disabled={isLoading}
                 autoComplete="new-password"
               />
             </div>
-            <p className="mt-1 text-xs text-gray-500">Password must be at least 6 characters</p>
           </div>
 
           {/* Confirm Password Field */}
           <div>
-            <label htmlFor="register-confirm-password" className="block text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
+            <label htmlFor="register-confirm-password" className="block text-xs font-semibold text-surface-500 mb-2 uppercase tracking-wide">
               Confirm Password
             </label>
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Lock className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
+              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                <Lock className="h-4 w-4 text-surface-400" />
               </div>
               <input
                 id="register-confirm-password"
                 type="password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className="block w-full pl-9 sm:pl-10 pr-3 py-2.5 sm:py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm sm:text-base"
-                placeholder="Re-enter your password"
+                className="input-modern pl-10"
+                placeholder="Confirm password"
                 required
                 disabled={isLoading}
                 autoComplete="new-password"
@@ -182,24 +185,24 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin, canClose = true }) =>
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white py-3 sm:py-2.5 rounded-xl font-semibold hover:from-green-600 hover:to-emerald-700 active:from-green-700 active:to-emerald-800 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-sm sm:text-base"
+            className="w-full gradient-mint text-white font-semibold py-3 rounded-xl shadow-glow-mint hover:opacity-90 active:scale-98 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
           >
             {isLoading ? (
               <>
-                <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                <span>Signing up...</span>
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                <span>Creating account...</span>
               </>
             ) : (
               <>
-                <UserPlus className="w-4 h-4 sm:w-5 sm:h-5" />
-                <span>Sign Up</span>
+                <UserPlus className="w-4 h-4" />
+                <span>Create Account</span>
               </>
             )}
           </button>
 
           {/* Switch to Login */}
-          <div className="text-center pt-2 pb-2">
-            <p className="text-xs sm:text-sm text-gray-600">
+          <div className="text-center pt-2">
+            <p className="text-sm text-surface-500">
               Already have an account?{' '}
               <button
                 type="button"
@@ -207,9 +210,9 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin, canClose = true }) =>
                   onClose();
                   onSwitchToLogin();
                 }}
-                className="text-green-600 hover:text-green-700 active:text-green-800 font-semibold"
+                className="text-accent-mint hover:text-emerald-600 font-semibold"
               >
-                Login now
+                Sign in
               </button>
             </p>
           </div>
@@ -220,4 +223,3 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin, canClose = true }) =>
 };
 
 export default RegisterModal;
-

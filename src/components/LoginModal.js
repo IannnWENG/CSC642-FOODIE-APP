@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Mail, Lock, LogIn } from 'lucide-react';
+import { X, Mail, Lock, LogIn, Sparkles } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 
 const LoginModal = ({ isOpen, onClose, onSwitchToRegister, canClose = true }) => {
@@ -41,53 +41,57 @@ const LoginModal = ({ isOpen, onClose, onSwitchToRegister, canClose = true }) =>
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 z-50" style={{ zIndex: 9999 }}>
-      <div className="bg-white rounded-t-2xl sm:rounded-2xl w-full sm:max-w-md shadow-xl animate-slideUp sm:animate-fadeInUp max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 backdrop-overlay flex items-end sm:items-center justify-center p-0 sm:p-4 z-50" style={{ zIndex: 9999 }}>
+      <div className="bg-white rounded-t-3xl sm:rounded-3xl w-full sm:max-w-md shadow-soft-xl animate-slideUp sm:animate-scaleIn max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="flex items-center justify-between p-4 sm:p-6 border-b sticky top-0 bg-white z-10">
-          <div className="flex items-center gap-2 sm:gap-3">
-            <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-2 rounded-xl">
-              <LogIn className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+        <div className="relative p-6 pb-4">
+          {/* Decorative Background */}
+          <div className="absolute top-0 left-0 right-0 h-24 gradient-brand-soft rounded-t-3xl -z-10" />
+          
+          <div className="flex items-center justify-between mb-6">
+            <div className="w-12 h-12 gradient-brand rounded-2xl flex items-center justify-center shadow-glow">
+              <Sparkles className="w-6 h-6 text-white" />
             </div>
-            <div>
-              <h2 className="text-xl sm:text-2xl font-bold text-gray-800">Login</h2>
-              <p className="text-xs sm:text-sm text-gray-500">Welcome back!</p>
-            </div>
+            {canClose && (
+              <button
+                onClick={onClose}
+                className="w-8 h-8 flex items-center justify-center rounded-full bg-white/80 hover:bg-white shadow-soft active:scale-95 transition-all"
+              >
+                <X className="w-4 h-4 text-surface-500" />
+              </button>
+            )}
           </div>
-          {canClose && (
-            <button
-              onClick={onClose}
-              className="p-2 hover:bg-gray-100 rounded-full transition-colors active:scale-95"
-            >
-              <X className="w-5 h-5" />
-            </button>
-          )}
+          
+          <div>
+            <h2 className="text-2xl font-bold font-display text-surface-800">Welcome back</h2>
+            <p className="text-sm text-surface-500 mt-1">Sign in to continue your food journey</p>
+          </div>
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4 safe-area-bottom">
+        <form onSubmit={handleSubmit} className="p-6 pt-2 space-y-4 safe-area-bottom">
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-3 sm:px-4 py-2 sm:py-3 rounded-xl text-xs sm:text-sm">
+            <div className="bg-red-50 border border-red-100 text-red-600 px-4 py-3 rounded-xl text-sm animate-fadeIn">
               {error}
             </div>
           )}
 
           {/* Email Field */}
           <div>
-            <label htmlFor="login-email" className="block text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
+            <label htmlFor="login-email" className="block text-xs font-semibold text-surface-500 mb-2 uppercase tracking-wide">
               Email
             </label>
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Mail className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
+              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                <Mail className="h-4 w-4 text-surface-400" />
               </div>
               <input
                 id="login-email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="block w-full pl-9 sm:pl-10 pr-3 py-2.5 sm:py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm sm:text-base"
-                placeholder="example@email.com"
+                className="input-modern pl-10"
+                placeholder="you@example.com"
                 required
                 disabled={isLoading}
                 autoComplete="email"
@@ -97,20 +101,20 @@ const LoginModal = ({ isOpen, onClose, onSwitchToRegister, canClose = true }) =>
 
           {/* Password Field */}
           <div>
-            <label htmlFor="login-password" className="block text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
+            <label htmlFor="login-password" className="block text-xs font-semibold text-surface-500 mb-2 uppercase tracking-wide">
               Password
             </label>
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Lock className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
+              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                <Lock className="h-4 w-4 text-surface-400" />
               </div>
               <input
                 id="login-password"
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="block w-full pl-9 sm:pl-10 pr-3 py-2.5 sm:py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm sm:text-base"
-                placeholder="Enter your password"
+                className="input-modern pl-10"
+                placeholder="••••••••"
                 required
                 disabled={isLoading}
                 autoComplete="current-password"
@@ -119,44 +123,43 @@ const LoginModal = ({ isOpen, onClose, onSwitchToRegister, canClose = true }) =>
           </div>
 
           {/* Test Account Info */}
-          <div className="bg-blue-50 border border-blue-200 rounded-xl p-3 text-xs sm:text-sm">
-            <p className="font-semibold text-blue-800 mb-1">Test Account:</p>
-            <p className="text-blue-700">Email: test@example.com</p>
-            <p className="text-blue-700">Password: test123</p>
+          <div className="bg-brand-50 border border-brand-100 rounded-xl p-3">
+            <p className="font-semibold text-brand-700 text-xs mb-1">Demo Account</p>
+            <p className="text-brand-600 text-xs">test@example.com / test123</p>
           </div>
 
           {/* Submit Button */}
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 sm:py-2.5 rounded-xl font-semibold hover:from-blue-600 hover:to-purple-700 active:from-blue-700 active:to-purple-800 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-sm sm:text-base"
+            className="w-full btn-primary py-3 flex items-center justify-center gap-2"
           >
             {isLoading ? (
               <>
-                <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                <span>Logging in...</span>
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                <span>Signing in...</span>
               </>
             ) : (
               <>
-                <LogIn className="w-4 h-4 sm:w-5 sm:h-5" />
-                <span>Login</span>
+                <LogIn className="w-4 h-4" />
+                <span>Sign In</span>
               </>
             )}
           </button>
 
           {/* Switch to Register */}
-          <div className="text-center pt-2 pb-2">
-            <p className="text-xs sm:text-sm text-gray-600">
-              Don't have an account?{' '}
+          <div className="text-center pt-2">
+            <p className="text-sm text-surface-500">
+              New here?{' '}
               <button
                 type="button"
                 onClick={() => {
                   onClose();
                   onSwitchToRegister();
                 }}
-                className="text-blue-600 hover:text-blue-700 active:text-blue-800 font-semibold"
+                className="text-brand-600 hover:text-brand-700 font-semibold"
               >
-                Sign up now
+                Create account
               </button>
             </p>
           </div>
@@ -167,4 +170,3 @@ const LoginModal = ({ isOpen, onClose, onSwitchToRegister, canClose = true }) =>
 };
 
 export default LoginModal;
-

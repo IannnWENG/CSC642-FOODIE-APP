@@ -162,195 +162,162 @@ const MenuModal = ({ place, isOpen, onClose, recommendations = [], userLocation 
   if (!isOpen || !place) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-      <div className="bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] flex flex-col border border-white/20">
-        {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200/50 flex-shrink-0">
-          <div className="flex items-center gap-3">
-            <div className="w-2 h-8 bg-gradient-to-b from-green-500 to-emerald-600 rounded-full"></div>
-            <div>
-              <h2 className="text-2xl font-bold text-gray-800">
-                {menu && menu.noMenuAvailable ? `${place.name} - Menu Unavailable` : `${place.name} Menu`}
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 z-50">
+      <div className="bg-white/95 backdrop-blur-md rounded-t-2xl sm:rounded-2xl shadow-2xl w-full sm:max-w-4xl max-h-[92vh] sm:max-h-[90vh] flex flex-col border border-white/20 animate-slideUp sm:animate-fadeInUp">
+        {/* Header - Compact for mobile */}
+        <div className="flex items-center justify-between p-3 sm:p-6 border-b border-gray-200/50 flex-shrink-0 sticky top-0 bg-white/95 backdrop-blur-md z-10">
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+            <div className="w-1.5 sm:w-2 h-6 sm:h-8 bg-gradient-to-b from-green-500 to-emerald-600 rounded-full flex-shrink-0"></div>
+            <div className="min-w-0 flex-1">
+              <h2 className="text-base sm:text-2xl font-bold text-gray-800 truncate">
+                {menu && menu.noMenuAvailable ? `${place.name}` : `${place.name}`}
               </h2>
-              <p className="text-sm text-gray-500">
+              <div className="flex flex-wrap items-center gap-1 sm:gap-2 mt-0.5">
                 {menu && menu.noMenuAvailable ? (
-                  <span className="text-red-500">Menu information unavailable</span>
+                  <span className="text-xs text-red-500">Menu unavailable</span>
                 ) : menu ? (
-                  `${menu.categories.length} categories, ${menu.categories.reduce((total, cat) => total + cat.items.length, 0)} items total`
+                  <span className="text-xs text-gray-500">{menu.categories.length} categories • {menu.categories.reduce((total, cat) => total + cat.items.length, 0)} items</span>
                 ) : (
-                  'Loading menu...'
+                  <span className="text-xs text-gray-500">Loading...</span>
                 )}
                 {menu && menu.restaurantType && !menu.noMenuAvailable && (
-                  <span className="ml-2 text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded">
-                    {menu.restaurantType} cuisine
+                  <span className="text-[10px] sm:text-xs bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded">
+                    {menu.restaurantType}
                   </span>
                 )}
                 {menu && menu.source === "Real Menu Search" && (
-                  <span className="ml-2 text-xs bg-green-100 text-green-700 px-2 py-1 rounded">
-                    ✓ Real Menu
+                  <span className="text-[10px] sm:text-xs bg-green-100 text-green-700 px-1.5 py-0.5 rounded">
+                    ✓ Real
                   </span>
                 )}
                 {menu && menu.aiGenerated && (
-                  <span className="ml-2 text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded">
-                    🤖 AI Search Result
+                  <span className="text-[10px] sm:text-xs bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded">
+                    🤖 AI
                   </span>
                 )}
-                {menu && menu.searchQuery && (
-                  <div className="mt-2 text-xs text-gray-500">
-                    <span className="font-medium">AI Search Query:</span>
-                    <span className="italic">{menu.searchQuery}</span>
-                  </div>
-                )}
-              </p>
+              </div>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="text-gray-500 hover:text-gray-700 hover:bg-gray-100 p-2 rounded-xl transition-all duration-200"
+            className="text-gray-500 hover:text-gray-700 hover:bg-gray-100 active:bg-gray-200 p-2 rounded-xl transition-all duration-200 flex-shrink-0 active:scale-95"
           >
-            <X className="w-6 h-6" />
+            <X className="w-5 h-5 sm:w-6 sm:h-6" />
           </button>
         </div>
 
-        {/* Search and Filter */}
-        <div className="p-6 border-b border-gray-200/50 bg-gray-50 flex-shrink-0">
-          <div className="flex flex-col sm:flex-row gap-4">
-            {/* Search */}
-            <div className="relative flex-1">
+        {/* Search and Filter - Optimized for mobile scroll */}
+        <div className="p-3 sm:p-6 border-b border-gray-200/50 bg-gray-50/80 flex-shrink-0">
+          <div className="flex flex-col gap-2 sm:gap-4">
+            {/* Search - Full width on mobile */}
+            <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
               <input
                 type="text"
-                placeholder="Search menu items..."
+                placeholder="Search menu..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                className="w-full pl-9 sm:pl-10 pr-4 py-2.5 sm:py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 text-sm sm:text-base bg-white"
               />
             </div>
             
-            {/* Category Filter */}
-            <div className="relative">
-              <select
-                value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
-                className="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-2 pr-8 focus:outline-none focus:ring-2 focus:ring-green-500"
-              >
-                <option value="all">All Categories</option>
-                {getCategories().map(category => (
-                  <option key={category} value={category}>{category}</option>
-                ))}
-              </select>
-              <Filter className="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-            </div>
+            {/* Filters Row - Horizontal scroll on mobile */}
+            <div className="flex gap-2 overflow-x-auto pb-1 -mx-3 px-3 sm:mx-0 sm:px-0 scrollbar-hide">
+              {/* Category Filter */}
+              <div className="relative flex-shrink-0">
+                <select
+                  value={selectedCategory}
+                  onChange={(e) => setSelectedCategory(e.target.value)}
+                  className="appearance-none bg-white border border-gray-300 rounded-xl px-3 sm:px-4 py-2 pr-8 focus:outline-none focus:ring-2 focus:ring-green-500 text-sm whitespace-nowrap"
+                >
+                  <option value="all">All Categories</option>
+                  {getCategories().map(category => (
+                    <option key={category} value={category}>{category}</option>
+                  ))}
+                </select>
+                <Filter className="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+              </div>
 
-            {/* Currency Converter */}
-            <div className="relative currency-dropdown">
-              <button
-                onClick={() => setShowCurrencyDropdown(!showCurrencyDropdown)}
-                className="flex items-center gap-2 bg-white border border-gray-300 rounded-lg px-4 py-2 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors"
-              >
-                <Globe className="w-4 h-4 text-gray-600" />
-                <span className="text-sm font-medium">{getCurrentCurrencyInfo().flag} {getCurrentCurrencyInfo().code}</span>
-                <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform ${showCurrencyDropdown ? 'rotate-180' : ''}`} />
-              </button>
-              
-              {showCurrencyDropdown && (
-                <div className="absolute top-full left-0 mt-1 w-64 bg-white border border-gray-200 rounded-lg shadow-lg z-50 max-h-60 overflow-y-auto">
-                  <div className="p-2">
-                    <div className="text-xs font-semibold text-gray-500 mb-2 px-2">Select currency</div>
-                    {currencyService.getSupportedCurrencies().map((currency) => (
-                      <button
-                        key={currency.code}
-                        onClick={() => handleCurrencyChange(currency.code)}
-                        className={`w-full flex items-center gap-3 px-3 py-2 text-left rounded-lg hover:bg-gray-100 transition-colors ${
-                          currentCurrency === currency.code ? 'bg-green-50 text-green-700' : 'text-gray-700'
-                        }`}
-                      >
-                        <span className="text-lg">{currency.flag}</span>
-                        <div className="flex-1">
-                          <div className="font-medium">{currency.name}</div>
-                          <div className="text-xs text-gray-500">{currency.code} {currency.symbol}</div>
-                        </div>
-                        {currentCurrency === currency.code && (
-                          <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                        )}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
+              {/* Currency Converter */}
+              <div className="relative currency-dropdown flex-shrink-0">
+                <button
+                  onClick={() => setShowCurrencyDropdown(!showCurrencyDropdown)}
+                  className="flex items-center gap-1.5 sm:gap-2 bg-white border border-gray-300 rounded-xl px-3 sm:px-4 py-2 hover:bg-gray-50 active:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors text-sm whitespace-nowrap"
+                >
+                  <Globe className="w-4 h-4 text-gray-600" />
+                  <span className="font-medium">{getCurrentCurrencyInfo().flag} {getCurrentCurrencyInfo().code}</span>
+                  <ChevronDown className={`w-3 h-3 sm:w-4 sm:h-4 text-gray-400 transition-transform ${showCurrencyDropdown ? 'rotate-180' : ''}`} />
+                </button>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Content - Scrollable */}
-        <div className="flex-1 overflow-y-auto min-h-0">
-          <div className="p-6">
+        {/* Content - Scrollable with momentum */}
+        <div className="flex-1 overflow-y-auto min-h-0 overscroll-contain scroll-smooth" style={{ WebkitOverflowScrolling: 'touch' }}>
+          <div className="p-3 sm:p-6">
             {loading ? (
-              <div className="text-center py-12">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500 mx-auto mb-4"></div>
-                <p className="text-gray-500">Loading menu...</p>
+              <div className="text-center py-8 sm:py-12">
+                <div className="animate-spin rounded-full h-10 w-10 sm:h-12 sm:w-12 border-b-2 border-green-500 mx-auto mb-3 sm:mb-4"></div>
+                <p className="text-gray-500 text-sm sm:text-base">Loading menu...</p>
               </div>
             ) : menu && menu.noMenuAvailable ? (
-              <div className="text-center py-12">
-                <div className="text-red-400 mb-4">
-                  <X className="w-12 h-12 mx-auto" />
+              <div className="text-center py-6 sm:py-12">
+                <div className="text-red-400 mb-3 sm:mb-4">
+                  <X className="w-10 h-10 sm:w-12 sm:h-12 mx-auto" />
                 </div>
-                <h3 className="text-lg font-semibold text-gray-800 mb-2">Unable to Get Menu Information</h3>
-                <p className="text-gray-600 mb-4">{menu.errorMessage}</p>
-                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 max-w-md mx-auto">
-                  <p className="text-sm text-yellow-800">
-                    <strong>Possible reasons:</strong>
-                  </p>
-                  <ul className="text-sm text-yellow-700 mt-2 text-left">
-                    <li>• Incomplete restaurant information</li>
-                    <li>• Restaurant temporarily or permanently closed</li>
-                    <li>• Restaurant rating too low</li>
-                    <li>• Network connection issues</li>
-                    <li>• Restaurant does not provide online menu</li>
+                <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-2">Unable to Get Menu</h3>
+                <p className="text-gray-600 mb-3 sm:mb-4 text-sm">{menu.errorMessage}</p>
+                <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-3 sm:p-4 max-w-md mx-auto text-left">
+                  <p className="text-xs sm:text-sm text-yellow-800 font-medium mb-1">Possible reasons:</p>
+                  <ul className="text-xs sm:text-sm text-yellow-700 space-y-0.5">
+                    <li>• Incomplete restaurant info</li>
+                    <li>• Restaurant closed</li>
+                    <li>• Network issues</li>
                   </ul>
                 </div>
                 
-                {/* AI Search Option - Only show when allowed */}
+                {/* AI Search Option */}
                 {menu.aiSearchAvailable && (
-                  <div className="mt-6 bg-gradient-to-r from-purple-50 to-blue-50 border border-purple-200 rounded-lg p-4 max-w-md mx-auto">
-                    <div className="flex items-center gap-2 mb-3">
-                      <Bot className="w-5 h-5 text-purple-600" />
-                      <h4 className="font-semibold text-purple-800">AI Smart Menu Search</h4>
+                  <div className="mt-4 sm:mt-6 bg-gradient-to-r from-purple-50 to-blue-50 border border-purple-200 rounded-xl p-3 sm:p-4 max-w-md mx-auto">
+                    <div className="flex items-center gap-2 mb-2 sm:mb-3">
+                      <Bot className="w-4 h-4 sm:w-5 sm:h-5 text-purple-600" />
+                      <h4 className="font-semibold text-purple-800 text-sm sm:text-base">AI Smart Search</h4>
                     </div>
-                    <p className="text-sm text-purple-700 mb-4">
-                      Use AI technology to analyze all restaurant information (name, address, rating, reviews, type, etc.) to search for related menu
+                    <p className="text-xs sm:text-sm text-purple-700 mb-3">
+                      Use AI to search for menu based on restaurant info
                     </p>
                     <button
                       onClick={handleAISearch}
                       disabled={isAISearching}
-                      className="px-6 py-2 bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-lg hover:from-purple-600 hover:to-blue-600 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-full sm:w-auto px-4 sm:px-6 py-2.5 sm:py-2 bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-xl hover:from-purple-600 hover:to-blue-600 active:from-purple-700 active:to-blue-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
                     >
                       {isAISearching ? (
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center justify-center gap-2">
                           <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                          AI Searching...
+                          Searching...
                         </div>
                       ) : (
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center justify-center gap-2">
                           <Bot className="w-4 h-4" />
-                          Use AI to Search Menu
+                          AI Search Menu
                         </div>
                       )}
                     </button>
                   </div>
                 )}
                 
-                <div className="mt-4">
+                <div className="mt-3 sm:mt-4">
                   <button
                     onClick={loadMenu}
-                    className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                    className="px-4 sm:px-6 py-2 bg-blue-500 text-white rounded-xl hover:bg-blue-600 active:bg-blue-700 transition-colors text-sm"
                   >
-                    Retry Loading Menu
+                    Retry
                   </button>
                 </div>
               </div>
             ) : filteredMenu && filteredMenu.categories.length > 0 ? (
-              <div className="space-y-8">
+              <div className="space-y-4 sm:space-y-8">
                 {/* AI Chat Assistant */}
                 <MenuAIChat 
                   place={place}
@@ -362,36 +329,36 @@ const MenuModal = ({ place, isOpen, onClose, recommendations = [], userLocation 
                 {/* Menu Categories */}
                 {filteredMenu.categories.map((category, categoryIndex) => (
                   <div key={categoryIndex} className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-                    <div className="bg-gradient-to-r from-green-50 to-emerald-50 px-6 py-4 border-b border-gray-200">
-                      <h3 className="text-xl font-bold text-gray-800">{category.name}</h3>
-                      <p className="text-sm text-gray-600">{category.items.length} items</p>
+                    <div className="bg-gradient-to-r from-green-50 to-emerald-50 px-3 sm:px-6 py-2.5 sm:py-4 border-b border-gray-200 sticky top-0 z-[1]">
+                      <h3 className="text-base sm:text-xl font-bold text-gray-800">{category.name}</h3>
+                      <p className="text-xs sm:text-sm text-gray-600">{category.items.length} items</p>
                     </div>
                     
-                    <div className="p-6">
-                      <div className="grid gap-4">
+                    <div className="p-2 sm:p-6">
+                      <div className="space-y-2 sm:space-y-4">
                         {category.items.map((item, itemIndex) => (
-                          <div key={itemIndex} className="flex items-start justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-                            <div className="flex-1">
-                              <div className="flex items-center gap-2 mb-2">
-                                <h4 className="font-semibold text-gray-800">{item.name}</h4>
+                          <div key={itemIndex} className="flex items-start justify-between p-3 sm:p-4 bg-gray-50 rounded-xl hover:bg-gray-100 active:bg-gray-100 transition-colors">
+                            <div className="flex-1 min-w-0 pr-2">
+                              <div className="flex flex-wrap items-center gap-1 sm:gap-2 mb-1 sm:mb-2">
+                                <h4 className="font-semibold text-gray-800 text-sm sm:text-base">{item.name}</h4>
                                 {item.aiRecommended ? (
-                                  <div className="flex items-center gap-1 text-purple-500">
-                                    <Bot className="w-4 h-4" />
-                                    <span className="text-sm font-medium">AI Recommended</span>
-                                  </div>
+                                  <span className="inline-flex items-center gap-0.5 text-purple-500 text-[10px] sm:text-xs bg-purple-50 px-1.5 py-0.5 rounded-full">
+                                    <Bot className="w-3 h-3" />
+                                    AI Pick
+                                  </span>
                                 ) : (
-                                  <div className="flex items-center gap-1 text-yellow-500">
-                                    <Star className="w-4 h-4 fill-current" />
-                                    <span className="text-sm font-medium">Popular</span>
-                                  </div>
+                                  <span className="inline-flex items-center gap-0.5 text-yellow-600 text-[10px] sm:text-xs bg-yellow-50 px-1.5 py-0.5 rounded-full">
+                                    <Star className="w-3 h-3 fill-current" />
+                                    Popular
+                                  </span>
                                 )}
                               </div>
-                              <p className="text-gray-600 text-sm leading-relaxed">{item.description}</p>
+                              <p className="text-gray-600 text-xs sm:text-sm leading-relaxed line-clamp-2 sm:line-clamp-none">{item.description}</p>
                             </div>
                             
-                            <div className="flex items-center gap-2 ml-4">
-                              <DollarSign className="w-4 h-4 text-green-600" />
-                              <span className="text-lg font-bold text-green-600">
+                            <div className="flex items-center gap-1 flex-shrink-0 bg-green-50 px-2 py-1 rounded-lg">
+                              <DollarSign className="w-3 h-3 sm:w-4 sm:h-4 text-green-600" />
+                              <span className="text-sm sm:text-lg font-bold text-green-600 whitespace-nowrap">
                                 {formatPrice(item.price)}
                               </span>
                             </div>
@@ -403,49 +370,93 @@ const MenuModal = ({ place, isOpen, onClose, recommendations = [], userLocation 
                 ))}
               </div>
             ) : (
-              <div className="text-center py-12">
-                <div className="text-gray-400 mb-4">
-                  <Search className="w-12 h-12 mx-auto" />
+              <div className="text-center py-8 sm:py-12">
+                <div className="text-gray-400 mb-3 sm:mb-4">
+                  <Search className="w-10 h-10 sm:w-12 sm:h-12 mx-auto" />
                 </div>
-                <p className="text-gray-500">No menu items found</p>
-                <p className="text-sm text-gray-400 mt-2">
-                  {searchQuery ? 'Try adjusting your search terms' : 'Menu information is not available for this restaurant'}
+                <p className="text-gray-500 text-sm sm:text-base">No menu items found</p>
+                <p className="text-xs sm:text-sm text-gray-400 mt-1 sm:mt-2">
+                  {searchQuery ? 'Try different search terms' : 'Menu not available'}
                 </p>
               </div>
             )}
           </div>
         </div>
 
-        {/* Footer */}
-        {menu && (
-          <div className="p-6 border-t border-gray-200/50 bg-gray-50 flex-shrink-0">
-            <div className="flex items-center justify-between text-sm text-gray-500">
+        {/* Footer - Simplified for mobile */}
+        {menu && !menu.noMenuAvailable && (
+          <div className="p-3 sm:p-6 border-t border-gray-200/50 bg-gray-50/80 flex-shrink-0 safe-area-bottom">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-xs sm:text-sm text-gray-500">
               <div className="flex items-center gap-2">
-                <Clock className="w-4 h-4" />
-                <span>Last updated: {new Date(menu.lastUpdated).toLocaleDateString()}</span>
+                <Clock className="w-3 h-3 sm:w-4 sm:h-4" />
+                <span>Updated: {new Date(menu.lastUpdated).toLocaleDateString()}</span>
               </div>
-              <div className="flex items-center gap-2">
-                <span>Source: {menu.source}</span>
-                <span>•</span>
-                <span>Original Currency: {menu.currency}</span>
-                <span>•</span>
-                <span className="flex items-center gap-1">
+              <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                <span className="bg-white px-2 py-0.5 rounded-full text-[10px] sm:text-xs">{menu.source}</span>
+                <span className="bg-white px-2 py-0.5 rounded-full text-[10px] sm:text-xs flex items-center gap-1">
                   <Globe className="w-3 h-3" />
-                  Display: {getCurrentCurrencyInfo().flag} {getCurrentCurrencyInfo().code}
+                  {getCurrentCurrencyInfo().flag} {getCurrentCurrencyInfo().code}
                 </span>
                 {place.restaurantType && (
-                  <>
-                    <span>•</span>
-                    <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded">
-                      Type: {place.restaurantType}
-                    </span>
-                  </>
+                  <span className="bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full text-[10px] sm:text-xs">
+                    {place.restaurantType}
+                  </span>
                 )}
               </div>
             </div>
           </div>
         )}
       </div>
+      
+      {/* Currency Dropdown - Fixed overlay */}
+      {showCurrencyDropdown && (
+        <>
+          <div 
+            className="fixed inset-0 z-[60]" 
+            onClick={() => setShowCurrencyDropdown(false)}
+          />
+          <div className="fixed left-4 right-4 sm:left-auto sm:right-8 top-1/2 -translate-y-1/2 sm:top-auto sm:translate-y-0 sm:bottom-auto w-auto sm:w-72 bg-white border border-gray-200 rounded-2xl shadow-2xl z-[70] max-h-[60vh] overflow-hidden">
+            <div className="p-3 border-b border-gray-100 flex items-center justify-between sticky top-0 bg-white">
+              <div className="flex items-center gap-2">
+                <Globe className="w-4 h-4 text-green-600" />
+                <span className="font-semibold text-gray-800 text-sm">Select Currency</span>
+              </div>
+              <button 
+                onClick={() => setShowCurrencyDropdown(false)}
+                className="p-1 hover:bg-gray-100 rounded-lg"
+              >
+                <X className="w-4 h-4 text-gray-500" />
+              </button>
+            </div>
+            <div className="overflow-y-auto max-h-[calc(60vh-50px)] p-2">
+              {currencyService.getSupportedCurrencies().map((currency) => (
+                <button
+                  key={currency.code}
+                  onClick={() => handleCurrencyChange(currency.code)}
+                  className={`w-full flex items-center gap-3 px-3 py-2.5 text-left rounded-xl transition-colors ${
+                    currentCurrency === currency.code 
+                      ? 'bg-green-50 text-green-700 border border-green-200' 
+                      : 'text-gray-700 hover:bg-gray-50 active:bg-gray-100'
+                  }`}
+                >
+                  <span className="text-xl">{currency.flag}</span>
+                  <div className="flex-1 min-w-0">
+                    <div className="font-medium text-sm">{currency.name}</div>
+                    <div className="text-xs text-gray-500">{currency.code} • {currency.symbol}</div>
+                  </div>
+                  {currentCurrency === currency.code && (
+                    <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
+                      <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                      </svg>
+                    </div>
+                  )}
+                </button>
+              ))}
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 };

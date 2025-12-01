@@ -13,7 +13,9 @@ class GoogleMapsService {
     this.loader = new Loader({
       apiKey: apiKey,
       version: 'weekly',
-      libraries: ['places']
+      libraries: ['places'],
+      language: 'en', // Force English for all Google Maps content
+      region: 'US'
     });
     this.map = null;
     this.placesService = null;

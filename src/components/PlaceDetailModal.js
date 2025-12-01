@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { X, Star, MapPin, Clock, Phone, Globe, Heart, Share2, Navigation, ChevronDown, ChevronUp, Filter, SortAsc, MessageSquare, Menu } from 'lucide-react';
+import { X, Star, MapPin, Clock, Phone, Globe, Heart, Share2, Navigation, ChevronDown, ChevronUp, Filter, SortAsc, MessageSquare, Menu, Languages, Loader2 } from 'lucide-react';
 import ReviewsModal from './ReviewsModal';
 import MenuModal from './MenuModal';
+import translateService from '../services/translateService';
 
 const PlaceDetailModal = ({ place, isOpen, onClose, onFavorite, isFavorite, recommendations = [], userLocation = null }) => {
   if (!isOpen || !place) return null;
@@ -11,10 +12,48 @@ const PlaceDetailModal = ({ place, isOpen, onClose, onFavorite, isFavorite, reco
   const userRatingsTotal = place.user_ratings_total || details.user_ratings_total || 0;
   
   const [showAllReviews, setShowAllReviews] = useState(false);
-  const [reviewSortBy, setReviewSortBy] = useState('newest'); // newest, oldest, highest, lowest
-  const [reviewFilter, setReviewFilter] = useState('all'); // all, 5star, 4star, 3star, 2star, 1star
+  const [reviewSortBy, setReviewSortBy] = useState('newest');
+  const [reviewFilter, setReviewFilter] = useState('all');
   const [showReviewsModal, setShowReviewsModal] = useState(false);
   const [showMenuModal, setShowMenuModal] = useState(false);
+  const [translations, setTranslations] = useState({});
+  const [translatingIds, setTranslatingIds] = useState(new Set());
+
+  // Translation handler
+  const handleTranslate = async (reviewIndex, text) => {
+    const reviewId = `detail-${reviewIndex}`;
+    
+    if (translations[reviewId]) {
+      setTranslations(prev => {
+        const updated = { ...prev };
+        delete updated[reviewId];
+        return updated;
+      });
+      return;
+    }
+
+    setTranslatingIds(prev => new Set([...prev, reviewId]));
+    
+    try {
+      const result = await translateService.translateToEnglish(text);
+      if (result.isTranslated) {
+        setTranslations(prev => ({
+          ...prev,
+          [reviewId]: result.translated
+        }));
+      }
+    } catch (error) {
+      console.error('Translation error:', error);
+    } finally {
+      setTranslatingIds(prev => {
+        const updated = new Set(prev);
+        updated.delete(reviewId);
+        return updated;
+      });
+    }
+  };
+
+  const needsTranslation = (text) => translateService.isNonEnglish(text);
 
   const getPriceLevel = (level) => {
     if (level === undefined) return 'Price unknown';
@@ -319,44 +358,82 @@ const PlaceDetailModal = ({ place, isOpen, onClose, onFavorite, isFavorite, reco
               
               {/* Reviews list */}
               <div className="space-y-3 sm:space-y-4">
-                {reviewsToShow.map((review, index) => (
-                  <div key={index} className="bg-white border border-gray-200 rounded-xl p-3 sm:p-4 shadow-sm hover:shadow-md transition-shadow active:bg-gray-50">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3 mb-2 sm:mb-3">
-                      <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-                        <div className="flex items-center gap-0.5">
-                          {[...Array(5)].map((_, i) => (
-                            <Star
-                              key={i}
-                              className={`w-3 h-3 sm:w-4 sm:h-4 ${
-                                i < review.rating
-                                  ? 'fill-yellow-400 text-yellow-400'
-                                  : 'text-gray-300'
-                              }`}
-                            />
-                          ))}
+                {reviewsToShow.map((review, index) => {
+                  const reviewId = `detail-${index}`;
+                  const isTranslating = translatingIds.has(reviewId);
+                  const translation = translations[reviewId];
+                  const showTranslateButton = needsTranslation(review.text);
+                  
+                  return (
+                    <div key={index} className="bg-white border border-gray-200 rounded-xl p-3 sm:p-4 shadow-sm hover:shadow-md transition-shadow active:bg-gray-50">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3 mb-2 sm:mb-3">
+                        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+                          <div className="flex items-center gap-0.5">
+                            {[...Array(5)].map((_, i) => (
+                              <Star
+                                key={i}
+                                className={`w-3 h-3 sm:w-4 sm:h-4 ${
+                                  i < review.rating
+                                    ? 'fill-yellow-400 text-yellow-400'
+                                    : 'text-gray-300'
+                                }`}
+                              />
+                            ))}
+                          </div>
+                          <span className="font-semibold text-xs sm:text-sm text-gray-700 truncate max-w-[120px] sm:max-w-none">{review.author_name}</span>
+                          <span className="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">
+                            {new Date(review.time * 1000).toLocaleDateString('en-US')}
+                          </span>
                         </div>
-                        <span className="font-semibold text-xs sm:text-sm text-gray-700 truncate max-w-[120px] sm:max-w-none">{review.author_name}</span>
-                        <span className="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">
-                          {new Date(review.time * 1000).toLocaleDateString('en-US')}
-                        </span>
+                        <span className="text-xs sm:text-sm font-medium text-gray-600 self-start sm:self-auto">{review.rating}/5</span>
                       </div>
-                      <span className="text-xs sm:text-sm font-medium text-gray-600 self-start sm:self-auto">{review.rating}/5</span>
+                      
+                      {/* Review text with translation */}
+                      <div className="mb-2">
+                        {translation ? (
+                          <div className="space-y-2">
+                            <p className="text-xs sm:text-sm text-gray-700 leading-relaxed">{translation}</p>
+                            <p className="text-xs text-gray-400 leading-relaxed italic border-l-2 border-gray-200 pl-2 line-clamp-2">
+                              Original: {review.text}
+                            </p>
+                          </div>
+                        ) : (
+                          <p className="text-xs sm:text-sm text-gray-700 leading-relaxed line-clamp-4 sm:line-clamp-none">{review.text}</p>
+                        )}
+                      </div>
+                      
+                      {/* Review actions */}
+                      <div className="flex flex-wrap items-center gap-3 sm:gap-4 mt-2 sm:mt-3 pt-2 sm:pt-3 border-t border-gray-100">
+                        {showTranslateButton && (
+                          <button 
+                            onClick={() => handleTranslate(index, review.text)}
+                            disabled={isTranslating}
+                            className={`flex items-center gap-1 text-xs transition-colors py-1 ${
+                              translation 
+                                ? 'text-blue-600 hover:text-blue-700' 
+                                : 'text-gray-500 hover:text-blue-500'
+                            } disabled:opacity-50`}
+                          >
+                            {isTranslating ? (
+                              <Loader2 className="w-3 h-3 animate-spin" />
+                            ) : (
+                              <Languages className="w-3 h-3" />
+                            )}
+                            <span>{translation ? 'Original' : 'Translate'}</span>
+                          </button>
+                        )}
+                        <button className="flex items-center gap-1 text-xs text-gray-500 hover:text-blue-500 active:text-blue-600 transition-colors py-1">
+                          <span>👍</span>
+                          <span>Helpful</span>
+                        </button>
+                        <button className="flex items-center gap-1 text-xs text-gray-500 hover:text-red-500 active:text-red-600 transition-colors py-1">
+                          <span>👎</span>
+                          <span>Not Helpful</span>
+                        </button>
+                      </div>
                     </div>
-                    <p className="text-xs sm:text-sm text-gray-700 leading-relaxed line-clamp-4 sm:line-clamp-none">{review.text}</p>
-                    
-                    {/* Review helpfulness buttons */}
-                    <div className="flex items-center gap-3 sm:gap-4 mt-2 sm:mt-3 pt-2 sm:pt-3 border-t border-gray-100">
-                      <button className="flex items-center gap-1 text-xs text-gray-500 hover:text-blue-500 active:text-blue-600 transition-colors py-1">
-                        <span>👍</span>
-                        <span>Helpful</span>
-                      </button>
-                      <button className="flex items-center gap-1 text-xs text-gray-500 hover:text-red-500 active:text-red-600 transition-colors py-1">
-                        <span>👎</span>
-                        <span>Not Helpful</span>
-                      </button>
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
               
               {/* Show more/less button */}

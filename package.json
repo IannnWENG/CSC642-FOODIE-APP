@@ -1,7 +1,7 @@
 {
-  "name": "restaurant-recommender",
+  "name": "foodie-tracker",
   "version": "1.0.0",
-  "description": "AI-powered restaurant and cafe recommender based on user location",
+  "description": "Discover amazing restaurants and cafes near you with AI-powered recommendations",
   "main": "index.js",
   "scripts": {
     "start": "react-scripts start",
