@@ -1,16 +1,16 @@
 class CurrencyService {
   constructor() {
     this.supportedCurrencies = [
-      { code: 'USD', name: '美元', symbol: '$', flag: '🇺🇸' },
-      { code: 'TWD', name: '台幣', symbol: 'NT$', flag: '🇹🇼' },
-      { code: 'EUR', name: '歐元', symbol: '€', flag: '🇪🇺' },
-      { code: 'JPY', name: '日圓', symbol: '¥', flag: '🇯🇵' },
-      { code: 'KRW', name: '韓圓', symbol: '₩', flag: '🇰🇷' },
-      { code: 'CNY', name: '人民幣', symbol: '¥', flag: '🇨🇳' },
-      { code: 'HKD', name: '港幣', symbol: 'HK$', flag: '🇭🇰' },
-      { code: 'SGD', name: '新加坡幣', symbol: 'S$', flag: '🇸🇬' },
-      { code: 'GBP', name: '英鎊', symbol: '£', flag: '🇬🇧' },
-      { code: 'AUD', name: '澳幣', symbol: 'A$', flag: '🇦🇺' }
+      { code: 'USD', name: 'US Dollar', symbol: '$', flag: '🇺🇸' },
+      { code: 'TWD', name: 'Taiwan Dollar', symbol: 'NT$', flag: '🇹🇼' },
+      { code: 'EUR', name: 'Euro', symbol: '€', flag: '🇪🇺' },
+      { code: 'JPY', name: 'Japanese Yen', symbol: '¥', flag: '🇯🇵' },
+      { code: 'KRW', name: 'Korean Won', symbol: '₩', flag: '🇰🇷' },
+      { code: 'CNY', name: 'Chinese Yuan', symbol: '¥', flag: '🇨🇳' },
+      { code: 'HKD', name: 'Hong Kong Dollar', symbol: 'HK$', flag: '🇭🇰' },
+      { code: 'SGD', name: 'Singapore Dollar', symbol: 'S$', flag: '🇸🇬' },
+      { code: 'GBP', name: 'British Pound', symbol: '£', flag: '🇬🇧' },
+      { code: 'AUD', name: 'Australian Dollar', symbol: 'A$', flag: '🇦🇺' }
     ];
     this.exchangeRates = {
       USD: 1.0,

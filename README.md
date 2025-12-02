@@ -23,7 +23,6 @@ An AI-powered restaurant and cafe recommender built with React. It integrates th
 
 ### Additional Features
 
-- **Multi-currency Support** - View menu prices in different currencies (USD, EUR, GBP, JPY, TWD, etc.)
 - **Search History** - Keep track of your recent searches locally
 - **Real-time Menu Data** - View restaurant menus with AI-powered search fallback
 - **Mobile Optimized** - Responsive design with smooth scrolling and touch-friendly UI
@@ -190,12 +189,6 @@ Map markers are color-coded:
 - One-click translation to English using AI
 - Shows original text alongside translation
 - Translations are cached for better performance
-
-### Currency Conversion
-
-Supports multiple currencies:
-
-- USD, EUR, GBP, JPY, CNY, TWD, KRW, THB, SGD, AUD, CAD
 
 ## Limitations
 
