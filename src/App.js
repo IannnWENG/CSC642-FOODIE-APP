@@ -45,6 +45,9 @@ function App() {
   const [showLanguageSelector, setShowLanguageSelector] = useState(!hasSelectedLanguage);
   const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
+  const [hasTourCompleted, setHasTourCompleted] = useState(() => {
+    return localStorage.getItem('foodieTracker_tourCompleted') === 'true';
+  });
 
   // Check if user has seen the tour before
   useEffect(() => {
@@ -60,11 +63,13 @@ function App() {
 
   const handleTourComplete = () => {
     localStorage.setItem('foodieTracker_tourCompleted', 'true');
+    setHasTourCompleted(true);
     setShowTour(false);
   };
 
   const handleTourSkip = () => {
     localStorage.setItem('foodieTracker_tourCompleted', 'true');
+    setHasTourCompleted(true);
     setShowTour(false);
   };
 
@@ -378,42 +383,56 @@ function App() {
               </div>
             </div>
 
-            {/* Mobile Language Selector - Only visible on mobile */}
-            <div className="sm:hidden relative">
-              <button
-                onClick={() => setShowLanguageDropdown(!showLanguageDropdown)}
-                className="flex items-center gap-1.5 px-3 py-1.5 bg-surface-100 hover:bg-surface-200 rounded-lg transition-all"
-              >
-                <Globe className="w-4 h-4 text-surface-600" />
-                <span className="text-xs font-medium text-surface-700">
-                  {currentLanguage === 'zh-TW' ? '中文' : 'EN'}
-                </span>
-              </button>
-              {showLanguageDropdown && (
-                <>
-                  <div 
-                    className="fixed inset-0 z-40"
-                    onClick={() => setShowLanguageDropdown(false)}
-                  />
-                  <div className="absolute right-0 mt-2 w-36 bg-white rounded-xl shadow-lg border border-surface-100 overflow-hidden z-50 animate-fadeIn">
-                    {languages.map((lang) => (
-                      <button
-                        key={lang.code}
-                        onClick={() => {
-                          changeLanguage(lang.code);
-                          setShowLanguageDropdown(false);
-                        }}
-                        className={`w-full px-3 py-2.5 text-left text-sm hover:bg-surface-50 transition-colors flex items-center gap-2 ${
-                          currentLanguage === lang.code ? 'bg-brand-50 text-brand-600' : 'text-surface-700'
-                        }`}
-                      >
-                        <span>{lang.flag}</span>
-                        <span className="font-medium">{lang.nativeName}</span>
-                      </button>
-                    ))}
-                  </div>
-                </>
+            {/* Mobile Right Controls - Only visible on mobile */}
+            <div className="sm:hidden flex items-center gap-2">
+              {/* Tour Button */}
+              {hasTourCompleted && (
+                <button
+                  onClick={handleRestartTour}
+                  className="p-2 bg-purple-100 hover:bg-purple-200 rounded-lg transition-all"
+                  title={t('tour.startTour')}
+                >
+                  <HelpCircle className="w-4 h-4 text-purple-600" />
+                </button>
               )}
+              
+              {/* Language Selector */}
+              <div className="relative">
+                <button
+                  onClick={() => setShowLanguageDropdown(!showLanguageDropdown)}
+                  className="flex items-center gap-1.5 px-3 py-1.5 bg-surface-100 hover:bg-surface-200 rounded-lg transition-all"
+                >
+                  <Globe className="w-4 h-4 text-surface-600" />
+                  <span className="text-xs font-medium text-surface-700">
+                    {currentLanguage === 'zh-TW' ? '中文' : 'EN'}
+                  </span>
+                </button>
+                {showLanguageDropdown && (
+                  <>
+                    <div 
+                      className="fixed inset-0 z-40"
+                      onClick={() => setShowLanguageDropdown(false)}
+                    />
+                    <div className="absolute right-0 mt-2 w-36 bg-white rounded-xl shadow-lg border border-surface-100 overflow-hidden z-50 animate-fadeIn">
+                      {languages.map((lang) => (
+                        <button
+                          key={lang.code}
+                          onClick={() => {
+                            changeLanguage(lang.code);
+                            setShowLanguageDropdown(false);
+                          }}
+                          className={`w-full px-3 py-2.5 text-left text-sm hover:bg-surface-50 transition-colors flex items-center gap-2 ${
+                            currentLanguage === lang.code ? 'bg-brand-50 text-brand-600' : 'text-surface-700'
+                          }`}
+                        >
+                          <span>{lang.flag}</span>
+                          <span className="font-medium">{lang.nativeName}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </>
+                )}
+              </div>
             </div>
             
             {/* Desktop Navigation */}
@@ -458,13 +477,15 @@ function App() {
                 <Info className="w-[18px] h-[18px] group-hover:scale-110 transition-transform" />
               </button>
               
+              {hasTourCompleted && (
               <button
                 onClick={handleRestartTour}
                 className="btn-icon group"
-                title="Start Tour"
+                  title={t('tour.startTour')}
               >
                 <HelpCircle className="w-[18px] h-[18px] group-hover:scale-110 transition-transform" />
               </button>
+              )}
 
               {/* Language Selector Dropdown */}
               <div className="relative">
@@ -668,7 +689,7 @@ function App() {
       {/* Mobile Bottom Navigation - Modern Pill Style */}
       <div className="fixed bottom-0 left-0 right-0 z-40 sm:hidden safe-area-bottom px-4 pb-2" data-tour="mobile-nav">
         <div className="glass-card rounded-2xl shadow-soft-lg border border-white/50">
-        <div className="flex items-center justify-around py-2">
+          <div className="flex items-center justify-around py-2">
             <button
               onClick={() => setShowAIChat(true)}
               className="flex flex-col items-center gap-0.5 p-2.5 min-w-[52px] text-surface-500 active:text-brand-600 active:bg-brand-50 rounded-xl transition-all"
@@ -682,18 +703,18 @@ function App() {
               onClick={() => setShowFavorites(true)}
               className="relative flex flex-col items-center gap-0.5 p-2.5 min-w-[52px] text-surface-500 active:text-accent-coral active:bg-red-50 rounded-xl transition-all"
               data-tour="mobile-favorites-btn"
-          >
+            >
               <Heart className="w-5 h-5" />
               <span className="text-[9px] font-semibold">{t('nav.saved')}</span>
-            {favoritesCount > 0 && (
+              {favoritesCount > 0 && (
                 <span className="absolute top-1 right-2 gradient-brand text-white text-[8px] rounded-full min-w-[14px] h-[14px] flex items-center justify-center font-bold">
-                {favoritesCount}
-              </span>
-            )}
-          </button>
+                  {favoritesCount}
+                </span>
+              )}
+            </button>
           
             {/* Center Action Button - Prominent Relocate */}
-          <button
+            <button
               onClick={handleGetLocation}
               disabled={isLoading}
               data-tour="mobile-location-btn"
@@ -702,7 +723,7 @@ function App() {
                   ? 'bg-gradient-to-br from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600' 
                   : 'bg-gradient-to-br from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600 animate-pulse'
               }`}
-          >
+            >
               <MapPin className="w-6 h-6 text-white" />
               <span className="text-[8px] text-white font-bold mt-0.5">
                 {userLocation ? t('nav.update') : t('nav.locate')}
@@ -710,9 +731,9 @@ function App() {
               {isLoading && (
                 <div className="absolute inset-0 rounded-2xl border-2 border-white/50 animate-ping" />
               )}
-          </button>
+            </button>
           
-          <button
+            <button
               onClick={() => setShowSearchHistory(true)}
               className="flex flex-col items-center gap-0.5 p-2.5 min-w-[52px] text-surface-500 active:text-accent-sky active:bg-sky-50 rounded-xl transition-all"
               data-tour="mobile-history-btn"
@@ -736,7 +757,7 @@ function App() {
               >
                 <LogIn className="w-5 h-5" />
                 <span className="text-[9px] font-semibold">{t('common.login')}</span>
-          </button>
+              </button>
             )}
           </div>
         </div>

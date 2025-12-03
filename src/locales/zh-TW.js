@@ -42,7 +42,8 @@ const zhTW = {
     locate: '定位',
     exit: '離開',
     help: '說明',
-    profile: '個人'
+    profile: '個人',
+    tour: '導覽'
   },
 
   // Location Controls
@@ -309,7 +310,8 @@ const zhTW = {
     start: '開始',
     swipeToNavigate: '滑動導航',
     skipTour: '已經知道如何使用？跳過導覽',
-    mobileOptimized: '手機優化導覽'
+    mobileOptimized: '手機優化導覽',
+    startTour: '開始導覽'
   },
 
   // Language Selector

@@ -42,7 +42,8 @@ const en = {
     locate: 'LOCATE',
     exit: 'Exit',
     help: 'Help',
-    profile: 'Profile'
+    profile: 'Profile',
+    tour: 'Tour'
   },
 
   // Location Controls
@@ -309,7 +310,8 @@ const en = {
     start: 'Start',
     swipeToNavigate: 'Swipe to navigate',
     skipTour: 'Already know how to use? Skip the tour',
-    mobileOptimized: 'Mobile-Optimized Tour'
+    mobileOptimized: 'Mobile-Optimized Tour',
+    startTour: 'Start Tour'
   },
 
   // Language Selector
