@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { Heart, MapPin, Star, Trash2, Filter, X } from 'lucide-react';
 import favoritesService from '../services/favoritesService';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const FavoritesPanel = ({ isOpen, onClose, onSelectPlace }) => {
+  const { t } = useLanguage();
   const [filter, setFilter] = useState('all');
   const favorites = favoritesService.getFavorites();
   const stats = favoritesService.getStats();
@@ -40,8 +42,8 @@ const FavoritesPanel = ({ isOpen, onClose, onSelectPlace }) => {
               <Heart className="w-5 h-5 sm:w-6 sm:h-6 text-red-500" />
             </div>
             <div>
-              <h2 className="text-lg sm:text-xl font-bold text-gray-800">My Favorites</h2>
-              <p className="text-xs sm:text-sm text-gray-500">{stats.total} favorite places</p>
+              <h2 className="text-lg sm:text-xl font-bold text-gray-800">{t('favorites.myFavorites')}</h2>
+              <p className="text-xs sm:text-sm text-gray-500">{stats.total} {t('favorites.favoritePlaces')}</p>
             </div>
           </div>
           <button
@@ -58,15 +60,15 @@ const FavoritesPanel = ({ isOpen, onClose, onSelectPlace }) => {
             <div className="flex flex-wrap gap-2 sm:gap-4 text-xs sm:text-sm">
               <div className="flex items-center gap-1.5 bg-white px-2 py-1 rounded-lg">
                 <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 bg-red-500 rounded-full"></div>
-                <span>Restaurants {stats.restaurants}</span>
+                <span>{t('favorites.restaurants')} {stats.restaurants}</span>
               </div>
               <div className="flex items-center gap-1.5 bg-white px-2 py-1 rounded-lg">
                 <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 bg-yellow-500 rounded-full"></div>
-                <span>Cafes {stats.cafes}</span>
+                <span>{t('favorites.cafes')} {stats.cafes}</span>
               </div>
               <div className="flex items-center gap-1.5 bg-white px-2 py-1 rounded-lg">
                 <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 bg-blue-500 rounded-full"></div>
-                <span>Others {stats.others}</span>
+                <span>{t('favorites.others')} {stats.others}</span>
               </div>
             </div>
             
@@ -75,9 +77,9 @@ const FavoritesPanel = ({ isOpen, onClose, onSelectPlace }) => {
               onChange={(e) => setFilter(e.target.value)}
               className="w-full sm:w-auto px-3 py-2 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500"
             >
-              <option value="all">All</option>
-              <option value="restaurant">Restaurant</option>
-              <option value="cafe">Cafe</option>
+              <option value="all">{t('common.all')}</option>
+              <option value="restaurant">{t('placeTypes.restaurant')}</option>
+              <option value="cafe">{t('placeTypes.cafe')}</option>
             </select>
           </div>
         </div>
@@ -87,8 +89,8 @@ const FavoritesPanel = ({ isOpen, onClose, onSelectPlace }) => {
           {filteredFavorites.length === 0 ? (
             <div className="text-center py-6 sm:py-8">
               <Heart className="w-10 h-10 sm:w-12 sm:h-12 mx-auto mb-3 sm:mb-4 text-gray-300" />
-              <p className="text-gray-500 text-sm sm:text-base">No favorite places yet</p>
-              <p className="text-xs sm:text-sm text-gray-400 mt-1">Start exploring and favorite restaurants you like!</p>
+              <p className="text-gray-500 text-sm sm:text-base">{t('favorites.noFavorites')}</p>
+              <p className="text-xs sm:text-sm text-gray-400 mt-1">{t('favorites.startExploring')}</p>
             </div>
           ) : (
             <div className="space-y-2 sm:space-y-3">
@@ -124,12 +126,12 @@ const FavoritesPanel = ({ isOpen, onClose, onSelectPlace }) => {
                         onClick={() => onSelectPlace(favorite)}
                         className="px-2.5 sm:px-3 py-1.5 sm:py-1 bg-blue-500 text-white text-xs sm:text-sm rounded-lg hover:bg-blue-600 active:bg-blue-700 transition-colors"
                       >
-                        View
+                        {t('common.view')}
                       </button>
                       <button
                         onClick={() => handleRemoveFavorite(favorite.place_id)}
                         className="p-1.5 sm:p-1 text-red-500 hover:bg-red-50 active:bg-red-100 rounded-lg transition-colors"
-                        title="Remove from favorites"
+                        title={t('favorites.removeFromFavorites')}
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
@@ -159,20 +161,20 @@ const FavoritesPanel = ({ isOpen, onClose, onSelectPlace }) => {
           <div className="flex flex-col-reverse sm:flex-row gap-2 sm:gap-3 p-4 sm:p-6 border-t bg-gray-50 safe-area-bottom">
             <button
               onClick={() => {
-                if (window.confirm('Are you sure you want to clear all favorites?')) {
+                if (window.confirm(t('favorites.confirmClear'))) {
                   favoritesService.clearFavorites();
                   onClose();
                 }
               }}
               className="px-4 py-2.5 sm:py-2 text-red-600 border border-red-300 rounded-xl hover:bg-red-50 active:bg-red-100 transition-colors text-sm sm:text-base"
             >
-              Clear All
+              {t('favorites.clearAll')}
             </button>
             <button
               onClick={onClose}
               className="flex-1 px-4 py-2.5 sm:py-2 bg-gray-600 text-white rounded-xl hover:bg-gray-700 active:bg-gray-800 transition-colors text-sm sm:text-base"
             >
-              Close
+              {t('common.close')}
             </button>
           </div>
         )}

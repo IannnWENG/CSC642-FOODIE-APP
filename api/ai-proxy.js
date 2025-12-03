@@ -13,9 +13,21 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    const { message, recommendations, userLocation, selectedRestaurant } = req.body || {};
-    if (!message) {
-      return res.status(400).json({ error: 'Missing message' });
+    const { messages, message, metadata } = req.body || {};
+    
+    // support new format (messages array) and old format (single message string) for backward compatibility
+    let finalMessages = [];
+    
+    if (Array.isArray(messages) && messages.length > 0) {
+      // new format: complete conversation messages array
+      finalMessages = messages;
+      console.log(` Received ${messages.length} messages (new format)`);
+    } else if (message) {
+      // old format: single message string (backward compatibility)
+      finalMessages = [{ role: 'user', content: message }];
+      console.log(' Received single message (legacy format)');
+    } else {
+      return res.status(400).json({ error: 'Missing messages or message' });
     }
 
     const apiKey = process.env.AI_API_KEY;
@@ -26,20 +38,20 @@ module.exports = async function handler(req, res) {
       return res.status(500).json({ error: 'Server misconfigured: missing AI_API_KEY' });
     }
 
+    // record metadata for debugging
+    if (metadata) {
+      console.log(' Request metadata:', JSON.stringify(metadata));
+    }
+
     const payload = {
       model,
-      messages: [
-        { role: 'user', content: message }
-      ],
-      max_tokens: 1000,
+      messages: finalMessages,
+      max_tokens: 1500,
       temperature: 0.7,
-      stream: false,
-      metadata: {
-        hasRecommendations: Array.isArray(recommendations) && recommendations.length > 0,
-        hasUserLocation: !!userLocation,
-        hasSelectedRestaurant: !!selectedRestaurant
-      }
+      stream: false
     };
+
+    console.log(` Calling AI API with model: ${model}`);
 
     const upstream = await fetch(apiUrl, {
       method: 'POST',
@@ -52,13 +64,17 @@ module.exports = async function handler(req, res) {
 
     if (!upstream.ok) {
       const text = await upstream.text();
+      console.error(` AI API error: ${upstream.status}`, text);
       return res.status(upstream.status).json({ error: `Upstream error: ${upstream.status} ${text}` });
     }
 
     const data = await upstream.json();
     const responseText = data?.choices?.[0]?.message?.content || '';
+    
+    console.log(' AI response received successfully');
     return res.status(200).json({ response: responseText });
   } catch (err) {
+    console.error(' Proxy error:', err);
     return res.status(500).json({ error: `Proxy error: ${err.message}` });
   }
 }

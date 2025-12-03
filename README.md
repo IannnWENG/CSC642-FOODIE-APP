@@ -14,6 +14,7 @@ An AI-powered restaurant and cafe recommender built with React. It integrates th
 - **Ratings & Reviews** - View restaurant ratings, reviews, and detailed information
 - **Favorites** - Save your favorite restaurants locally
 - **Advanced Filters** - Filter by radius, type, and price range
+- **Multi-language Support** - Full support for English and Traditional Chinese (繁體中文)
 
 ### AI Features
 
@@ -26,6 +27,8 @@ An AI-powered restaurant and cafe recommender built with React. It integrates th
 - **Search History** - Keep track of your recent searches locally
 - **Real-time Menu Data** - View restaurant menus with AI-powered search fallback
 - **Mobile Optimized** - Responsive design with smooth scrolling and touch-friendly UI
+- **Onboarding Tour** - Interactive guided tour for new users
+- **Language Selector** - Choose your preferred language on first visit
 
 ## Requirements
 
@@ -65,12 +68,39 @@ The app opens at `http://localhost:3000`.
 
 ## How to Use
 
-1. Click **Get Location** to allow the browser to access your location
-2. Choose search radius, type, and price range, then click **Search Nearby**
-3. Click a restaurant marker or list item to see details
-4. Click the **robot icon** 🤖 to open AI chat and ask for recommendations
-5. Use Favorites to save places; Search History keeps your recent searches locally
-6. Click **Translate** 🌐 on non-English reviews to see English translations
+1. **Select Language** - Choose English or 繁體中文 on first visit
+2. Click **Get Location** to allow the browser to access your location
+3. Choose search radius, type, and price range, then click **Search Nearby**
+4. Click a restaurant marker or list item to see details
+5. Click the **robot icon** 🤖 to open AI chat and ask for recommendations
+6. Use Favorites to save places; Search History keeps your recent searches locally
+7. Click **Translate** 🌐 on non-English reviews to see English translations
+8. Click the **globe icon** 🌍 in the header to change language anytime
+
+## Multi-language Support
+
+The app supports the following languages:
+
+| Language                       | Code    | Status          |
+| ------------------------------ | ------- | --------------- |
+| English                        | `en`    | ✅ Full support |
+| 繁體中文 (Traditional Chinese) | `zh-TW` | ✅ Full support |
+
+### Language Features
+
+- **First-visit language selection** - Beautiful language selector on first visit
+- **Persistent preference** - Language choice saved in browser localStorage
+- **Real-time switching** - Change language anytime via header dropdown
+- **Complete translations** - All UI elements, modals, and tour fully translated
+- **Auto-detection** - Detects browser language as default
+
+### Adding New Languages
+
+To add a new language:
+
+1. Create a new translation file in `src/locales/` (e.g., `ja.js` for Japanese)
+2. Add the language to `src/locales/index.js`
+3. All translation keys are documented in `src/locales/en.js`
 
 ## AI Assistant
 
@@ -108,18 +138,25 @@ csc642/
 │   │   ├── ErrorMessage.js       # Error display component
 │   │   ├── FavoritesPanel.js     # Favorites management panel
 │   │   ├── HelpModal.js          # Help & instructions modal
+│   │   ├── LanguageSelector.js   # Language selection screen
 │   │   ├── LoadingSpinner.js     # Loading indicator
 │   │   ├── LocationControls.js   # Location & search controls
 │   │   ├── LoginModal.js         # User login modal
 │   │   ├── MapComponent.js       # Google Maps integration
 │   │   ├── MenuAIChat.js         # Menu AI assistant
 │   │   ├── MenuModal.js          # Restaurant menu display
+│   │   ├── OnboardingTour.js     # Interactive guided tour
 │   │   ├── PlaceDetailModal.js   # Place details view
 │   │   ├── RecommendationList.js # AI recommendations list
 │   │   ├── RegisterModal.js      # User registration modal
 │   │   └── ReviewsModal.js       # Place reviews display
 │   ├── contexts/
-│   │   └── AuthContext.js        # Authentication context provider
+│   │   ├── AuthContext.js        # Authentication context provider
+│   │   └── LanguageContext.js    # Language/i18n context provider
+│   ├── locales/
+│   │   ├── en.js                 # English translations
+│   │   ├── zh-TW.js              # Traditional Chinese translations
+│   │   └── index.js              # Locales configuration
 │   ├── services/
 │   │   ├── aiRecommendationService.js  # AI recommendation scoring
 │   │   ├── aiService.js          # AI API integration
@@ -165,6 +202,7 @@ csc642/
 - **Hosting**: Firebase Hosting
 - **Backend**: Firebase Cloud Functions
 - **Fonts**: Outfit, Inter (Google Fonts)
+- **i18n**: Custom React Context-based internationalization
 
 ## Key Features Explained
 
@@ -189,6 +227,14 @@ Map markers are color-coded:
 - One-click translation to English using AI
 - Shows original text alongside translation
 - Translations are cached for better performance
+
+### Internationalization (i18n)
+
+- Context-based language management via `LanguageContext`
+- Translation function `t()` for easy usage in components
+- Supports nested translation keys (e.g., `t('login.welcomeBack')`)
+- Fallback to English if translation key not found
+- Language preference persisted in localStorage
 
 ## Limitations
 

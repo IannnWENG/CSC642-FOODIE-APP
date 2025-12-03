@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { X, Mail, Lock, User, UserPlus, Sparkles } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const RegisterModal = ({ isOpen, onClose, onSwitchToLogin, canClose = true }) => {
   const { register, isAuthenticated } = useAuth();
+  const { t } = useLanguage();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -26,7 +28,7 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin, canClose = true }) =>
     setError('');
 
     if (password !== confirmPassword) {
-      setError('Passwords do not match');
+      setError(t('register.passwordsNotMatch'));
       return;
     }
 
@@ -41,10 +43,10 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin, canClose = true }) =>
         setPassword('');
         setConfirmPassword('');
       } else {
-        setError(result.error || 'Registration failed');
+        setError(result.error || t('register.registrationFailed'));
       }
     } catch (err) {
-      setError(err.message || 'An error occurred during registration');
+      setError(err.message || t('register.registrationError'));
     } finally {
       setIsLoading(false);
     }
@@ -75,8 +77,8 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin, canClose = true }) =>
           </div>
           
           <div>
-            <h2 className="text-2xl font-bold font-display text-surface-800">Create account</h2>
-            <p className="text-sm text-surface-500 mt-1">Start discovering amazing food spots</p>
+            <h2 className="text-2xl font-bold font-display text-surface-800">{t('register.createAccountTitle')}</h2>
+            <p className="text-sm text-surface-500 mt-1">{t('register.startDiscovering')}</p>
           </div>
         </div>
 
@@ -91,7 +93,7 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin, canClose = true }) =>
           {/* Name Field */}
           <div>
             <label htmlFor="register-name" className="block text-xs font-semibold text-surface-500 mb-2 uppercase tracking-wide">
-              Name
+              {t('register.name')}
             </label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
@@ -103,7 +105,7 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin, canClose = true }) =>
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 className="input-modern pl-10"
-                placeholder="Your name"
+                placeholder={t('register.namePlaceholder')}
                 required
                 disabled={isLoading}
                 autoComplete="name"
@@ -114,7 +116,7 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin, canClose = true }) =>
           {/* Email Field */}
           <div>
             <label htmlFor="register-email" className="block text-xs font-semibold text-surface-500 mb-2 uppercase tracking-wide">
-              Email
+              {t('login.email')}
             </label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
@@ -126,7 +128,7 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin, canClose = true }) =>
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="input-modern pl-10"
-                placeholder="you@example.com"
+                placeholder={t('login.emailPlaceholder')}
                 required
                 disabled={isLoading}
                 autoComplete="email"
@@ -137,7 +139,7 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin, canClose = true }) =>
           {/* Password Field */}
           <div>
             <label htmlFor="register-password" className="block text-xs font-semibold text-surface-500 mb-2 uppercase tracking-wide">
-              Password
+              {t('login.password')}
             </label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
@@ -149,7 +151,7 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin, canClose = true }) =>
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="input-modern pl-10"
-                placeholder="Min. 6 characters"
+                placeholder={t('register.minCharacters')}
                 required
                 minLength={6}
                 disabled={isLoading}
@@ -161,7 +163,7 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin, canClose = true }) =>
           {/* Confirm Password Field */}
           <div>
             <label htmlFor="register-confirm-password" className="block text-xs font-semibold text-surface-500 mb-2 uppercase tracking-wide">
-              Confirm Password
+              {t('register.confirmPassword')}
             </label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
@@ -173,7 +175,7 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin, canClose = true }) =>
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 className="input-modern pl-10"
-                placeholder="Confirm password"
+                placeholder={t('register.confirmPasswordPlaceholder')}
                 required
                 disabled={isLoading}
                 autoComplete="new-password"
@@ -190,12 +192,12 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin, canClose = true }) =>
             {isLoading ? (
               <>
                 <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                <span>Creating account...</span>
+                <span>{t('register.creatingAccount')}</span>
               </>
             ) : (
               <>
                 <UserPlus className="w-4 h-4" />
-                <span>Create Account</span>
+                <span>{t('register.createAccountBtn')}</span>
               </>
             )}
           </button>
@@ -203,7 +205,7 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin, canClose = true }) =>
           {/* Switch to Login */}
           <div className="text-center pt-2">
             <p className="text-sm text-surface-500">
-              Already have an account?{' '}
+              {t('register.alreadyHaveAccount')}{' '}
               <button
                 type="button"
                 onClick={() => {
@@ -212,7 +214,7 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin, canClose = true }) =>
                 }}
                 className="text-accent-mint hover:text-emerald-600 font-semibold"
               >
-                Sign in
+                {t('register.signInLink')}
               </button>
             </p>
           </div>

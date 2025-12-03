@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { X, Send, Bot, User, Loader2 } from 'lucide-react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { X, Send, Bot, User, Loader2, RefreshCw } from 'lucide-react';
 import aiService from '../services/aiService';
 
 const AIChatModal = ({ isOpen, onClose, recommendations, userLocation, selectedRestaurant, onRestaurantAnalysis }) => {
@@ -7,6 +7,7 @@ const AIChatModal = ({ isOpen, onClose, recommendations, userLocation, selectedR
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef(null);
+  const prevIsOpenRef = useRef(false);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -16,19 +17,35 @@ const AIChatModal = ({ isOpen, onClose, recommendations, userLocation, selectedR
     scrollToBottom();
   }, [messages]);
 
+  // when Modal is opened, clear AI service's conversation history and show welcome message
   useEffect(() => {
-    if (isOpen && messages.length === 0) {
-      // Add welcome message
+    if (isOpen && !prevIsOpenRef.current) {
+      // Modal just opened
+      aiService.clearConversationHistory();
       setMessages([
         {
           id: 1,
           type: 'ai',
-          content: "Hi! I'm your AI restaurant assistant 🤖 I can help you find the perfect place to eat based on your preferences, answer questions about recommended restaurants, and provide personalized suggestions. What would you like to know?",
+          content: "Hello! I'm your AI restaurant assistant 🤖\n\nI can help you:\n• Recommend nearby restaurants based on your preferences\n• Answer questions about recommended restaurants\n• Compare different restaurant features\n• Provide personalized dining suggestions\n\nWhat can I help you with?",
           timestamp: new Date()
         }
       ]);
     }
-  }, [isOpen, messages.length]);
+    prevIsOpenRef.current = isOpen;
+  }, [isOpen]);
+
+  // clear conversation and start over
+  const handleClearChat = useCallback(() => {
+    aiService.clearConversationHistory();
+    setMessages([
+      {
+        id: Date.now(),
+        type: 'ai',
+        content: "Conversation cleared ✨ let's start over! What can I help you with?",
+        timestamp: new Date()
+      }
+    ]);
+  }, []);
 
   // Handle automatic analysis of selected restaurant
   useEffect(() => {
@@ -173,12 +190,21 @@ Keep the response engaging and helpful.`;
               <p className="text-xs sm:text-sm text-gray-500 hidden sm:block">Ask me anything about restaurants!</p>
             </div>
           </div>
-          <button
-            onClick={onClose}
-            className="text-gray-500 hover:text-gray-700 hover:bg-gray-100 p-2 rounded-xl transition-all duration-200 active:scale-95"
-          >
-            <X className="w-5 h-5" />
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleClearChat}
+              className="text-gray-500 hover:text-purple-600 hover:bg-purple-50 p-2 rounded-xl transition-all duration-200 active:scale-95"
+              title="Clear conversation"
+            >
+              <RefreshCw className="w-4 h-4 sm:w-5 sm:h-5" />
+            </button>
+            <button
+              onClick={onClose}
+              className="text-gray-500 hover:text-gray-700 hover:bg-gray-100 p-2 rounded-xl transition-all duration-200 active:scale-95"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
         </div>
 
         {/* Chat area */}

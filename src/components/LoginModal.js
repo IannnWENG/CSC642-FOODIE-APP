@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { X, Mail, Lock, LogIn, Sparkles } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const LoginModal = ({ isOpen, onClose, onSwitchToRegister, canClose = true }) => {
   const { login, isAuthenticated } = useAuth();
+  const { t } = useLanguage();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -29,10 +31,10 @@ const LoginModal = ({ isOpen, onClose, onSwitchToRegister, canClose = true }) =>
         setEmail('');
         setPassword('');
       } else {
-        setError(result.error || 'Login failed');
+        setError(result.error || t('login.loginFailed'));
       }
     } catch (err) {
-      setError(err.message || 'An error occurred during login');
+      setError(err.message || t('login.loginError'));
     } finally {
       setIsLoading(false);
     }
@@ -63,8 +65,8 @@ const LoginModal = ({ isOpen, onClose, onSwitchToRegister, canClose = true }) =>
           </div>
           
           <div>
-            <h2 className="text-2xl font-bold font-display text-surface-800">Welcome back</h2>
-            <p className="text-sm text-surface-500 mt-1">Sign in to continue your food journey</p>
+            <h2 className="text-2xl font-bold font-display text-surface-800">{t('login.welcomeBack')}</h2>
+            <p className="text-sm text-surface-500 mt-1">{t('login.signInContinue')}</p>
           </div>
         </div>
 
@@ -79,7 +81,7 @@ const LoginModal = ({ isOpen, onClose, onSwitchToRegister, canClose = true }) =>
           {/* Email Field */}
           <div>
             <label htmlFor="login-email" className="block text-xs font-semibold text-surface-500 mb-2 uppercase tracking-wide">
-              Email
+              {t('login.email')}
             </label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
@@ -91,7 +93,7 @@ const LoginModal = ({ isOpen, onClose, onSwitchToRegister, canClose = true }) =>
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="input-modern pl-10"
-                placeholder="you@example.com"
+                placeholder={t('login.emailPlaceholder')}
                 required
                 disabled={isLoading}
                 autoComplete="email"
@@ -102,7 +104,7 @@ const LoginModal = ({ isOpen, onClose, onSwitchToRegister, canClose = true }) =>
           {/* Password Field */}
           <div>
             <label htmlFor="login-password" className="block text-xs font-semibold text-surface-500 mb-2 uppercase tracking-wide">
-              Password
+              {t('login.password')}
             </label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
@@ -114,7 +116,7 @@ const LoginModal = ({ isOpen, onClose, onSwitchToRegister, canClose = true }) =>
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="input-modern pl-10"
-                placeholder="••••••••"
+                placeholder={t('login.passwordPlaceholder')}
                 required
                 disabled={isLoading}
                 autoComplete="current-password"
@@ -124,7 +126,7 @@ const LoginModal = ({ isOpen, onClose, onSwitchToRegister, canClose = true }) =>
 
           {/* Test Account Info */}
           <div className="bg-brand-50 border border-brand-100 rounded-xl p-3">
-            <p className="font-semibold text-brand-700 text-xs mb-1">Demo Account</p>
+            <p className="font-semibold text-brand-700 text-xs mb-1">{t('login.demoAccount')}</p>
             <p className="text-brand-600 text-xs">test@example.com / test123</p>
           </div>
 
@@ -137,12 +139,12 @@ const LoginModal = ({ isOpen, onClose, onSwitchToRegister, canClose = true }) =>
             {isLoading ? (
               <>
                 <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                <span>Signing in...</span>
+                <span>{t('login.signingIn')}</span>
               </>
             ) : (
               <>
                 <LogIn className="w-4 h-4" />
-                <span>Sign In</span>
+                <span>{t('login.signIn')}</span>
               </>
             )}
           </button>
@@ -150,7 +152,7 @@ const LoginModal = ({ isOpen, onClose, onSwitchToRegister, canClose = true }) =>
           {/* Switch to Register */}
           <div className="text-center pt-2">
             <p className="text-sm text-surface-500">
-              New here?{' '}
+              {t('login.newHere')}{' '}
               <button
                 type="button"
                 onClick={() => {
@@ -159,7 +161,7 @@ const LoginModal = ({ isOpen, onClose, onSwitchToRegister, canClose = true }) =>
                 }}
                 className="text-brand-600 hover:text-brand-700 font-semibold"
               >
-                Create account
+                {t('login.createAccount')}
               </button>
             </p>
           </div>

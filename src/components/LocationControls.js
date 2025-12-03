@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { MapPin, Search, Filter, RefreshCw, X, Clock, Navigation, Utensils, Coffee, Cake } from 'lucide-react';
 import googleMapsService from '../services/googleMapsService';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const LocationControls = ({ 
   onGetLocation, 
@@ -10,6 +11,7 @@ const LocationControls = ({
   userLocation,
   onFilterChange 
 }) => {
+  const { t } = useLanguage();
   const [searchRadius, setSearchRadius] = useState(1000);
   const [placeType, setPlaceType] = useState('restaurant');
   const [priceRange, setPriceRange] = useState('all');
@@ -109,10 +111,10 @@ const LocationControls = ({
 
   // Place type options with icons
   const placeTypes = [
-    { value: 'restaurant', label: 'Restaurant', icon: Utensils },
-    { value: 'cafe', label: 'Cafe', icon: Coffee },
-    { value: 'bakery', label: 'Bakery', icon: Cake },
-    { value: 'meal_takeaway', label: 'Takeaway', icon: Utensils },
+    { value: 'restaurant', label: t('placeTypes.restaurant'), icon: Utensils },
+    { value: 'cafe', label: t('placeTypes.cafe'), icon: Coffee },
+    { value: 'bakery', label: t('placeTypes.bakery'), icon: Cake },
+    { value: 'meal_takeaway', label: t('placeTypes.takeaway'), icon: Utensils },
   ];
 
   // Radius options
@@ -125,42 +127,64 @@ const LocationControls = ({
 
   return (
     <div className="card-elevated p-4 sm:p-5 mb-4 sm:mb-5 animate-fadeInUp">
-      {/* Header with Location Status */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
-        <div className="flex items-center gap-3">
-          <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${userLocation ? 'gradient-mint' : 'bg-surface-200'}`}>
-            {isLoading ? (
-              <RefreshCw className="w-5 h-5 text-white animate-spin" />
-            ) : (
-              <Navigation className={`w-5 h-5 ${userLocation ? 'text-white' : 'text-surface-400'}`} />
-            )}
-          </div>
-          <div>
-            <h2 className="text-sm sm:text-base font-bold font-display text-surface-800">
-              {userLocation ? 'Location Found' : 'Find Nearby'}
-            </h2>
-            <p className="text-xs text-surface-400">
-              {userLocation 
-                ? `${userLocation.lat.toFixed(4)}, ${userLocation.lng.toFixed(4)}`
-                : 'Enable location to discover places'
-              }
-            </p>
+      {/* Header with Location Status and Prominent Relocate Button */}
+      <div className="flex flex-col gap-3 mb-4">
+        {/* Location Status Row */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${userLocation ? 'gradient-mint' : 'bg-surface-200'}`}>
+              {isLoading ? (
+                <RefreshCw className="w-5 h-5 text-white animate-spin" />
+              ) : (
+                <Navigation className={`w-5 h-5 ${userLocation ? 'text-white' : 'text-surface-400'}`} />
+              )}
+            </div>
+            <div>
+              <h2 className="text-sm sm:text-base font-bold font-display text-surface-800">
+                {userLocation ? t('location.found') : t('location.findNearby')}
+              </h2>
+              <p className="text-xs text-surface-400">
+                {userLocation 
+                  ? `${userLocation.lat.toFixed(4)}, ${userLocation.lng.toFixed(4)}`
+                  : t('location.enableLocation')
+                }
+              </p>
+            </div>
           </div>
         </div>
         
-        {!userLocation && (
-          <button
-            onClick={onGetLocation}
-            disabled={isLoading}
-            className="btn-primary py-2.5 px-4 text-sm w-full sm:w-auto"
-          >
-            {isLoading ? 'Getting...' : 'Get My Location'}
-          </button>
-        )}
+        {/* Prominent Relocate Button - Always Visible */}
+        <button
+          onClick={onGetLocation}
+          disabled={isLoading}
+          data-tour="location-btn"
+          className={`w-full py-3 px-4 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 transition-all duration-200 ${
+            userLocation 
+              ? 'bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white shadow-lg hover:shadow-xl active:scale-[0.98]' 
+              : 'bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600 text-white shadow-lg hover:shadow-xl animate-pulse active:scale-[0.98]'
+          }`}
+        >
+          {isLoading ? (
+            <>
+              <RefreshCw className="w-5 h-5 animate-spin" />
+              <span>{t('location.gettingLocation')}</span>
+            </>
+          ) : userLocation ? (
+            <>
+              <MapPin className="w-5 h-5" />
+              <span>{t('location.updateMyLocation')}</span>
+            </>
+          ) : (
+            <>
+              <MapPin className="w-5 h-5" />
+              <span>{t('location.getMyLocation')}</span>
+            </>
+          )}
+        </button>
       </div>
 
       {/* Search Mode Toggle - Pill Style */}
-      <div className="flex p-1 bg-surface-100 rounded-xl mb-4">
+      <div className="flex p-1 bg-surface-100 rounded-xl mb-4" data-tour="search-mode">
         <button
           onClick={() => setSearchMode('nearby')}
           className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium transition-all ${
@@ -169,7 +193,7 @@ const LocationControls = ({
               : 'text-surface-500 hover:text-surface-700'
           }`}
         >
-          Nearby
+          {t('search.nearby')}
         </button>
         <button
           onClick={() => setSearchMode('text')}
@@ -179,7 +203,7 @@ const LocationControls = ({
               : 'text-surface-500 hover:text-surface-700'
           }`}
         >
-          Search
+          {t('search.searchMode')}
         </button>
       </div>
 
@@ -193,7 +217,7 @@ const LocationControls = ({
               value={searchQuery}
               onChange={handleInputChange}
               onKeyPress={(e) => e.key === 'Enter' && handleTextSearch()}
-              placeholder="Search restaurants, cafes..."
+              placeholder={t('search.placeholder')}
               className="input-modern pl-10 pr-10"
             />
             {searchQuery && (
@@ -213,7 +237,7 @@ const LocationControls = ({
                 <div className="p-3 border-b border-surface-100">
                   <div className="flex items-center gap-2 text-xs font-semibold text-surface-400 mb-2 uppercase tracking-wide">
                     <Clock className="w-3 h-3" />
-                    Recent
+                    {t('search.recent')}
                   </div>
                   {recentSearches.map((search, index) => (
                     <button
@@ -232,7 +256,7 @@ const LocationControls = ({
               
               {searchSuggestions.length > 0 && (
                 <div className="p-3">
-                  <div className="text-xs font-semibold text-surface-400 mb-2 uppercase tracking-wide">Suggestions</div>
+                  <div className="text-xs font-semibold text-surface-400 mb-2 uppercase tracking-wide">{t('search.suggestions')}</div>
                   {searchSuggestions.slice(0, 5).map((suggestion, index) => (
                     <button
                       key={index}
@@ -255,7 +279,7 @@ const LocationControls = ({
       {/* Quick Type Selection - Scrollable Pills */}
       {searchMode === 'nearby' && (
         <div className="mb-4">
-          <label className="block text-xs font-semibold text-surface-500 mb-2 uppercase tracking-wide">Type</label>
+          <label className="block text-xs font-semibold text-surface-500 mb-2 uppercase tracking-wide">{t('search.type')}</label>
           <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0">
             {placeTypes.map((type) => {
               const Icon = type.icon;
@@ -279,10 +303,10 @@ const LocationControls = ({
       )}
 
       {/* Filters Row */}
-      <div className="grid grid-cols-2 gap-3 mb-4">
+      <div className="grid grid-cols-2 gap-3 mb-4" data-tour="filters">
         {/* Radius */}
         <div>
-          <label className="block text-xs font-semibold text-surface-500 mb-2 uppercase tracking-wide">Distance</label>
+          <label className="block text-xs font-semibold text-surface-500 mb-2 uppercase tracking-wide">{t('search.distance')}</label>
           <div className="flex gap-1.5 flex-wrap">
             {radiusOptions.map((opt) => (
               <button
@@ -302,10 +326,10 @@ const LocationControls = ({
 
         {/* Price Range */}
         <div>
-          <label className="block text-xs font-semibold text-surface-500 mb-2 uppercase tracking-wide">Price</label>
+          <label className="block text-xs font-semibold text-surface-500 mb-2 uppercase tracking-wide">{t('search.price')}</label>
           <div className="flex gap-1.5">
             {[
-              { value: 'all', label: 'All' },
+              { value: 'all', label: t('common.all') },
               { value: 'low', label: '$' },
               { value: 'medium', label: '$$' },
               { value: 'high', label: '$$$' },
@@ -330,17 +354,18 @@ const LocationControls = ({
       <button
         onClick={searchMode === 'nearby' ? handleSearch : handleTextSearch}
         disabled={isLoading || (searchMode === 'nearby' ? !userLocation : !searchQuery.trim())}
+        data-tour="search-btn"
         className="w-full btn-primary py-3 text-sm flex items-center justify-center gap-2"
       >
         {isLoading ? (
           <>
             <RefreshCw className="w-4 h-4 animate-spin" />
-            Searching...
+            {t('search.searching')}
           </>
         ) : (
           <>
             <Search className="w-4 h-4" />
-            {searchMode === 'nearby' ? 'Find Places' : 'Search'}
+            {searchMode === 'nearby' ? t('search.findPlaces') : t('common.search')}
           </>
         )}
       </button>

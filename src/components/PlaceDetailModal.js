@@ -3,8 +3,11 @@ import { X, Star, MapPin, Clock, Phone, Globe, Heart, Share2, Navigation, Chevro
 import ReviewsModal from './ReviewsModal';
 import MenuModal from './MenuModal';
 import translateService from '../services/translateService';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const PlaceDetailModal = ({ place, isOpen, onClose, onFavorite, isFavorite, recommendations = [], userLocation = null }) => {
+  const { t } = useLanguage();
+  
   if (!isOpen || !place) return null;
 
   const details = place.details || {};
@@ -56,7 +59,7 @@ const PlaceDetailModal = ({ place, isOpen, onClose, onFavorite, isFavorite, reco
   const needsTranslation = (text) => translateService.isNonEnglish(text);
 
   const getPriceLevel = (level) => {
-    if (level === undefined) return 'Price unknown';
+    if (level === undefined) return t('placeDetails.priceUnknown', 'Price unknown');
     return '$'.repeat(level + 1) + ' (Under $' + ((level + 1) * 20) + ')';
   };
 
@@ -123,10 +126,48 @@ const PlaceDetailModal = ({ place, isOpen, onClose, onFavorite, isFavorite, reco
   };
 
   const handleDirections = () => {
-    const lat = place.geometry.location.lat();
-    const lng = place.geometry.location.lng();
-    const url = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
-    window.open(url, '_blank');
+    let lat, lng;
+    
+    // Handle different location object formats
+    if (place.geometry && place.geometry.location) {
+      const location = place.geometry.location;
+      // Check if it's a Google Maps LatLng object (has methods) or plain object
+      if (typeof location.lat === 'function') {
+        lat = location.lat();
+        lng = location.lng();
+      } else {
+        lat = location.lat;
+        lng = location.lng;
+      }
+    } else if (place.location) {
+      // Alternative location format
+      if (typeof place.location.lat === 'function') {
+        lat = place.location.lat();
+        lng = place.location.lng();
+      } else {
+        lat = place.location.lat;
+        lng = place.location.lng;
+      }
+    } else if (details.geometry && details.geometry.location) {
+      const location = details.geometry.location;
+      if (typeof location.lat === 'function') {
+        lat = location.lat();
+        lng = location.lng();
+      } else {
+        lat = location.lat;
+        lng = location.lng;
+      }
+    }
+    
+    if (lat && lng) {
+      const url = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
+      window.open(url, '_blank');
+    } else {
+      // Fallback: use place name for directions
+      const encodedName = encodeURIComponent(place.name + ' ' + (place.vicinity || ''));
+      const url = `https://www.google.com/maps/dir/?api=1&destination=${encodedName}`;
+      window.open(url, '_blank');
+    }
   };
 
   const getProcessedReviews = () => {
@@ -202,7 +243,7 @@ const PlaceDetailModal = ({ place, isOpen, onClose, onFavorite, isFavorite, reco
                 <button
                   onClick={() => setShowMenuModal(true)}
                   className="p-2.5 sm:p-3 text-gray-500 hover:text-green-500 active:text-green-600 hover:bg-gradient-to-r hover:from-green-50 hover:to-emerald-50 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg active:scale-95 border border-gray-200"
-                  title="View Menu"
+                  title={t('placeDetails.viewMenu')}
                 >
                   <Menu className="w-4 h-4 sm:w-5 sm:h-5" />
                 </button>
@@ -211,6 +252,7 @@ const PlaceDetailModal = ({ place, isOpen, onClose, onFavorite, isFavorite, reco
                   className={`p-2.5 sm:p-3 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg active:scale-95 ${
                     isFavorite ? 'text-red-500 bg-gradient-to-r from-red-50 to-pink-50 border border-red-200' : 'text-gray-500 hover:text-red-500 active:text-red-600 hover:bg-gradient-to-r hover:from-red-50 hover:to-pink-50 border border-gray-200'
                   }`}
+                  title={isFavorite ? t('placeDetails.removeFromFavorites') : t('placeDetails.addToFavorites')}
                 >
                   <Heart className={`w-4 h-4 sm:w-5 sm:h-5 ${isFavorite ? 'fill-current' : ''}`} />
                 </button>
@@ -247,7 +289,7 @@ const PlaceDetailModal = ({ place, isOpen, onClose, onFavorite, isFavorite, reco
                     ? 'text-green-700 bg-green-100' 
                     : 'text-red-700 bg-red-100'
                 }`}>
-                  {details.opening_hours.open_now ? 'Open now' : 'Closed'}
+                  {details.opening_hours.open_now ? t('placeDetails.openNow') : t('placeDetails.closed')}
                 </span>
               </div>
             )}
@@ -276,7 +318,7 @@ const PlaceDetailModal = ({ place, isOpen, onClose, onFavorite, isFavorite, reco
                   rel="noopener noreferrer"
                   className="text-green-600 hover:text-green-800 transition-colors font-semibold"
                 >
-                  Official Website
+                  {t('placeDetails.website')}
                 </a>
               </div>
             )}
@@ -287,7 +329,7 @@ const PlaceDetailModal = ({ place, isOpen, onClose, onFavorite, isFavorite, reco
             <div className="mb-8">
               <div className="flex items-center gap-2 mb-4">
                 <div className="w-2 h-6 bg-gradient-to-b from-purple-500 to-pink-600 rounded-full"></div>
-                <h3 className="text-lg font-bold text-gray-800">Opening Hours</h3>
+                <h3 className="text-lg font-bold text-gray-800">{t('placeDetails.hours')}</h3>
               </div>
               <div className="bg-gray-50 rounded-xl p-4 space-y-2">
                 {details.opening_hours.weekday_text.map((time, index) => (
@@ -307,7 +349,7 @@ const PlaceDetailModal = ({ place, isOpen, onClose, onFavorite, isFavorite, reco
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <div className="w-2 h-5 sm:h-6 bg-gradient-to-b from-orange-500 to-red-600 rounded-full"></div>
-                    <h3 className="text-base sm:text-lg font-bold text-gray-800">Reviews ({processedReviews.length})</h3>
+                    <h3 className="text-base sm:text-lg font-bold text-gray-800">{t('placeDetails.reviews')} ({processedReviews.length})</h3>
                   </div>
                   
                   {/* View all reviews button */}
@@ -316,7 +358,7 @@ const PlaceDetailModal = ({ place, isOpen, onClose, onFavorite, isFavorite, reco
                     className="flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-1.5 sm:py-2 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-lg transition-all duration-200 font-medium text-xs sm:text-sm"
                   >
                     <MessageSquare className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                    <span className="hidden xs:inline">View All</span>
+                    <span className="hidden xs:inline">{t('common.view')}</span>
                   </button>
                 </div>
                 
@@ -462,12 +504,12 @@ const PlaceDetailModal = ({ place, isOpen, onClose, onFavorite, isFavorite, reco
               <div className="mt-6 bg-gray-50 rounded-xl p-4">
                 <h4 className="font-semibold text-gray-800 mb-3">Rating Distribution</h4>
                 <div className="space-y-2">
-                  {[5, 4, 3, 2, 1].map(rating => {
-                    const count = processedReviews.filter(r => r.rating === rating).length;
+                  {[5, 4, 3, 2, 1].map(ratingVal => {
+                    const count = processedReviews.filter(r => r.rating === ratingVal).length;
                     const percentage = processedReviews.length > 0 ? (count / processedReviews.length) * 100 : 0;
                     return (
-                      <div key={rating} className="flex items-center gap-3">
-                        <span className="text-sm font-medium text-gray-600 w-8">{rating}★</span>
+                      <div key={ratingVal} className="flex items-center gap-3">
+                        <span className="text-sm font-medium text-gray-600 w-8">{ratingVal}★</span>
                         <div className="flex-1 bg-gray-200 rounded-full h-2">
                           <div
                             className="bg-gradient-to-r from-yellow-400 to-orange-500 h-2 rounded-full transition-all duration-300"
@@ -511,13 +553,13 @@ const PlaceDetailModal = ({ place, isOpen, onClose, onFavorite, isFavorite, reco
             className="flex-1 flex items-center justify-center gap-3 py-3 sm:py-4 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl hover:from-blue-600 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 font-semibold"
           >
             <Navigation className="w-4 h-4 sm:w-5 sm:h-5" />
-            Get Directions
+            {t('placeDetails.navigate')}
           </button>
           <button
             onClick={onClose}
             className="px-6 sm:px-8 py-3 sm:py-4 border-2 border-gray-300 text-gray-700 rounded-xl hover:bg-white hover:border-gray-400 transition-all duration-200 font-semibold"
           >
-            Close
+            {t('common.close')}
           </button>
         </div>
       </div>
