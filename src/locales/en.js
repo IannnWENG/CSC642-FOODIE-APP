@@ -40,7 +40,9 @@ const en = {
     history: 'History',
     update: 'UPDATE',
     locate: 'LOCATE',
-    exit: 'Exit'
+    exit: 'Exit',
+    help: 'Help',
+    profile: 'Profile'
   },
 
   // Location Controls
@@ -220,84 +222,84 @@ const en = {
   // Onboarding Tour
   tour: {
     // Welcome
-    welcomeTitle: "Welcome to Foodie Tracker! 🍽️",
+    welcomeTitle: "Welcome to Foodie Tracker! ",
     welcomeDesc: "Your AI-powered restaurant discovery companion. Let's take a quick tour to help you get started and discover amazing places to eat!",
     
     // Steps
-    step1Title: "Step 1: Get Your Location 📍",
+    step1Title: "Step 1: Get Your Location ",
     step1Desc: "First, click this button to enable location services. This helps us find restaurants near you. The button will pulse when location is needed!",
     
-    step2Title: "Step 2: Choose Search Mode 🔍",
+    step2Title: "Step 2: Choose Search Mode ",
     step2Desc: "Switch between 'Nearby' for quick discovery or 'Search' to find specific restaurants, cuisines, or dishes by name.",
     
-    step3Title: "Step 3: Set Your Preferences ⚙️",
+    step3Title: "Step 3: Set Your Preferences ",
     step3Desc: "Customize your search with filters! Choose restaurant type (Restaurant, Cafe, Bakery), distance (500m to 5km), and price range ($-$$$).",
     
-    step4Title: "Step 4: Start Searching 🚀",
+    step4Title: "Step 4: Start Searching ",
     step4Desc: "Once you've set your preferences, click this button to find places. Our AI will analyze and rank the best options for you!",
     
-    mapTitle: "Interactive Map 🗺️",
+    mapTitle: "Interactive Map ",
     mapDesc: "Results appear on the map as colored markers. Green (70+) = Excellent, Amber (50-69) = Good, Gray (<50) = Fair. Click any marker to see details!",
     
-    recommendationsTitle: "AI Recommendations ⭐",
+    recommendationsTitle: "AI Recommendations ",
     recommendationsDesc: "Browse the curated list of places ranked by our AI. Each card shows the score, rating, distance, and price. Click to view full details!",
     
-    aiAssistantTitle: "AI Assistant 🤖",
+    aiAssistantTitle: "AI Assistant ",
     aiAssistantDesc: "Need personalized recommendations? Chat with our AI assistant! Ask about cuisines, get dish suggestions, or compare restaurants.",
     
-    favoritesTitle: "Save Your Favorites ❤️",
+    favoritesTitle: "Save Your Favorites ",
     favoritesDesc: "Found a place you love? Save it to your favorites! Access your saved restaurants anytime from this button.",
     
-    historyTitle: "Search History 📜",
+    historyTitle: "Search History ",
     historyDesc: "View your past searches and quickly revisit places you've discovered. Your history is saved locally for easy access.",
     
-    menuFeatureTitle: "Explore Restaurant Menus 📋",
+    menuFeatureTitle: "Explore Restaurant Menus ",
     menuFeatureDesc: "When viewing restaurant details, tap the menu icon to see available dishes. Our AI can even recommend dishes based on the menu!",
     
-    completeTitle: "You're All Set! 🎉",
+    completeTitle: "You're All Set! ",
     completeDesc: "That's everything you need to know! Start exploring and discover your next favorite restaurant. Happy dining!",
     
     // Mobile specific
-    mobileWelcomeTitle: "Welcome to Foodie Tracker! 🍽️",
+    mobileWelcomeTitle: "Welcome to Foodie Tracker! ",
     mobileWelcomeDesc: "Your AI-powered restaurant discovery companion, optimized for mobile! Let's take a quick tour of the app.",
     
-    touchGesturesTitle: "Touch Gestures 👆",
+    touchGesturesTitle: "Touch Gestures ",
     touchGesturesDesc: "This app is designed for touch! Tap cards to view details, swipe lists to scroll, and use pinch gestures on the map to zoom.",
     
-    bottomNavTitle: "Bottom Navigation Bar 📱",
+    bottomNavTitle: "Bottom Navigation Bar ",
     bottomNavDesc: "Your main controls are at the bottom of the screen for easy thumb access. All key features are just one tap away!",
     
-    mobileLocationTitle: "Location Button 📍",
+    mobileLocationTitle: "Location Button ",
     mobileLocationDesc: "The big button in the center! Tap it to get your location. It will pulse orange when location is needed, and turn blue once found.",
     
-    searchOptionsTitle: "Search Options 🔍",
+    searchOptionsTitle: "Search Options ",
     searchOptionsDesc: "Toggle between 'Nearby' for quick discovery or 'Search' to type what you're craving. Set your preferred distance and price range below!",
     
-    filterSearchTitle: "Filter Your Search ⚙️",
+    filterSearchTitle: "Filter Your Search ",
     filterSearchDesc: "Choose distance (500m - 5km) and price range ($-$$$). Tap any option to select it. Your choices affect the AI recommendations!",
     
-    findPlacesTitle: "Find Places Button 🚀",
+    findPlacesTitle: "Find Places Button ",
     findPlacesDesc: "Once you've set your preferences, tap this button. Our AI will find and rank the best restaurants near you!",
     
-    swipeResultsTitle: "Swipe Through Results 📋",
+    swipeResultsTitle: "Swipe Through Results ",
     swipeResultsDesc: "Scroll through AI-ranked restaurants. Each card shows score, rating, distance & price. Tap any card to see full details, reviews, and menu!",
     
-    mobileMapTitle: "Interactive Map 🗺️",
+    mobileMapTitle: "Interactive Map ",
     mobileMapDesc: "Pinch to zoom, drag to pan! Colored markers show restaurant scores: Green = Excellent (70+), Amber = Good (50-69), Gray = Fair.",
     
-    mobileAiTitle: "AI Chat Assistant 🤖",
+    mobileAiTitle: "AI Chat Assistant ",
     mobileAiDesc: "Tap the AI button to chat! Ask for recommendations, compare restaurants, or get dish suggestions. Your personal food advisor!",
     
-    mobileFavoritesTitle: "Saved Places ❤️",
+    mobileFavoritesTitle: "Saved Places ",
     mobileFavoritesDesc: "Tap to view your saved restaurants. Add favorites from any restaurant detail page by tapping the heart icon!",
     
-    mobileHistoryTitle: "Search History 📜",
+    mobileHistoryTitle: "Search History ",
     mobileHistoryDesc: "Quick access to your past searches. Great for revisiting places you've discovered before!",
     
-    proTipsTitle: "Pro Tips for Mobile 💡",
+    proTipsTitle: "Pro Tips for Mobile ",
     proTipsDesc: "• Pull down to refresh results\n• Long-press markers for quick actions\n• Shake to reset search\n• Swipe cards left to dismiss",
     
-    readyTitle: "Ready to Explore! 🎉",
+    readyTitle: "Ready to Explore! ",
     readyDesc: "You're all set! Start by tapping the location button, then search for your next delicious meal. Happy dining!",
     
     // Navigation
@@ -325,6 +327,65 @@ const en = {
     placeholder: 'Ask me anything about food...',
     send: 'Send',
     thinking: 'Thinking...'
+  },
+
+  // Profile
+  profile: {
+    title: 'Profile',
+    level: 'Level',
+    levelNewbie: 'Newbie',
+    levelFoodie: 'Foodie',
+    levelExplorer: 'Explorer',
+    levelExpert: 'Expert',
+    levelMaster: 'Master',
+    
+    // Tabs
+    tabOverview: 'Overview',
+    tabActivity: 'Activity',
+    tabAchievements: 'Achievements',
+    
+    // Stats
+    searches: 'Searches',
+    placesViewed: 'Places Viewed',
+    favorites: 'Favorites',
+    aiChats: 'AI Chats',
+    menusViewed: 'Menus',
+    navigations: 'Navigations',
+    
+    // Account Info
+    accountInfo: 'Account Info',
+    email: 'Email',
+    memberSince: 'Member Since',
+    accountAge: 'Account Age',
+    days: 'days',
+    
+    // Activity
+    loginStreak: 'Login Streak',
+    best: 'Best',
+    recentActivity: 'Recent Activity',
+    noActivity: 'No recent activity',
+    justNow: 'just now',
+    minutesAgo: 'min ago',
+    hoursAgo: 'hours ago',
+    daysAgo: 'days ago',
+    
+    // Categories
+    topCategories: 'Top Categories',
+    
+    // Achievements
+    achievementsUnlocked: 'Achievements Unlocked',
+    achievementFirstSearch: 'First Search',
+    achievementFirstSearchDesc: 'Complete your first search',
+    achievementExplorer: 'Explorer',
+    achievementExplorerDesc: 'Complete 10 searches',
+    achievementCollector: 'Collector',
+    achievementCollectorDesc: 'Save 5 favorites',
+    achievementAIFriend: 'AI Friend',
+    achievementAIFriendDesc: 'Chat with AI 10 times',
+    achievementNavigator: 'Navigator',
+    achievementNavigatorDesc: 'Navigate to 5 places',
+    achievementStreakMaster: 'Streak Master',
+    achievementStreakMasterDesc: '7 day login streak'
   },
 
   // Place Details
@@ -364,7 +425,17 @@ const en = {
     locationError: 'Failed to get location. Please enable location services.',
     searchError: 'Search failed. Please try again.',
     networkError: 'Network error. Please check your connection.',
-    genericError: 'Something went wrong. Please try again.'
+    genericError: 'Something went wrong. Please try again.',
+    
+    // Firebase Auth Errors
+    emailInUse: 'This email is already registered',
+    invalidEmail: 'Please enter a valid email address',
+    weakPassword: 'Password must be at least 6 characters',
+    userDisabled: 'This account has been disabled',
+    userNotFound: 'Invalid email or password',
+    wrongPassword: 'Invalid email or password',
+    tooManyRequests: 'Too many failed attempts. Please try again later',
+    allFieldsRequired: 'All fields are required'
   }
 };
 

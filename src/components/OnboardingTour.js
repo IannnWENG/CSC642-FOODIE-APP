@@ -292,7 +292,7 @@ const OnboardingTour = ({ isOpen, onComplete, onSkip }) => {
       
       // Delay spotlight update to ensure DOM is ready
       const timer = setTimeout(() => {
-        updateSpotlight();
+      updateSpotlight();
       }, 100);
       
       window.addEventListener('resize', updateSpotlight);
@@ -315,7 +315,7 @@ const OnboardingTour = ({ isOpen, onComplete, onSkip }) => {
 
   const handleNext = useCallback(() => {
     if (isAnimating) return; // Prevent multiple clicks
-    
+
     if (currentStep < totalSteps - 1) {
       setIsAnimating(true);
       setTimeout(() => {
@@ -329,7 +329,7 @@ const OnboardingTour = ({ isOpen, onComplete, onSkip }) => {
 
   const handlePrev = useCallback(() => {
     if (isAnimating) return; // Prevent multiple clicks
-    
+
     if (currentStep > 0) {
       setIsAnimating(true);
       setTimeout(() => {

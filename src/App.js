@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { MapPin, Heart, Info, History, X, Bot, LogIn, LogOut, HelpCircle, Globe } from 'lucide-react';
+import { MapPin, Heart, Info, History, X, Bot, LogIn, LogOut, HelpCircle, Globe, User } from 'lucide-react';
 import MapComponent from './components/MapComponent';
 import RecommendationList from './components/RecommendationList';
 import LocationControls from './components/LocationControls';
@@ -13,12 +13,14 @@ import LoginModal from './components/LoginModal';
 import RegisterModal from './components/RegisterModal';
 import OnboardingTour from './components/OnboardingTour';
 import LanguageSelector from './components/LanguageSelector';
+import ProfileModal from './components/ProfileModal';
 import { useAuth } from './contexts/AuthContext';
 import { useLanguage } from './contexts/LanguageContext';
 import googleMapsService from './services/googleMapsService';
 import aiRecommendationService from './services/aiRecommendationService';
 import favoritesService from './services/favoritesService';
 import searchHistoryService from './services/searchHistoryService';
+import userStatsService from './services/userStatsService';
 import { checkEnvironmentVariables } from './utils/envCheck';
 
 function App() {
@@ -42,6 +44,7 @@ function App() {
   const [showTour, setShowTour] = useState(false);
   const [showLanguageSelector, setShowLanguageSelector] = useState(!hasSelectedLanguage);
   const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
+  const [showProfile, setShowProfile] = useState(false);
 
   // Check if user has seen the tour before
   useEffect(() => {
@@ -152,6 +155,7 @@ function App() {
       setRecommendations(contextualRecommendations);
       
       searchHistoryService.addSearch(searchParams, contextualRecommendations);
+      userStatsService.recordSearch(searchParams);
     } catch (error) {
       setError(error.message);
       console.error('Search failed:', error);
@@ -217,6 +221,7 @@ function App() {
         type: 'text_search',
         query: searchParams.query
       }, contextualRecommendations);
+      userStatsService.recordSearch(searchParams);
     } catch (error) {
       setError(error.message);
       console.error('Text search failed:', error);
@@ -239,10 +244,12 @@ function App() {
       };
       setSelectedPlace(placeWithDetails);
       setShowPlaceDetail(true);
+      userStatsService.recordPlaceView(place);
     } catch (error) {
       console.error('Failed to get place details:', error);
       setSelectedPlace(place);
       setShowPlaceDetail(true);
+      userStatsService.recordPlaceView(place);
     } finally {
       setIsLoading(false);
     }
@@ -299,8 +306,14 @@ function App() {
       setShowRegister(false);
       handleGetLocation();
       updateFavoritesCount();
+      
+      // Record login and initialize user stats
+      if (user) {
+        userStatsService.initializeForUser(user.id);
+        userStatsService.recordLogin();
+      }
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, user]);
 
   // Show language selector first
   if (!hasSelectedLanguage) {
@@ -363,6 +376,44 @@ function App() {
                 </h1>
                 <p className="text-[10px] sm:text-xs text-surface-500 font-medium hidden sm:block">{t('app.subtitle')}</p>
               </div>
+            </div>
+
+            {/* Mobile Language Selector - Only visible on mobile */}
+            <div className="sm:hidden relative">
+              <button
+                onClick={() => setShowLanguageDropdown(!showLanguageDropdown)}
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-surface-100 hover:bg-surface-200 rounded-lg transition-all"
+              >
+                <Globe className="w-4 h-4 text-surface-600" />
+                <span className="text-xs font-medium text-surface-700">
+                  {currentLanguage === 'zh-TW' ? '中文' : 'EN'}
+                </span>
+              </button>
+              {showLanguageDropdown && (
+                <>
+                  <div 
+                    className="fixed inset-0 z-40"
+                    onClick={() => setShowLanguageDropdown(false)}
+                  />
+                  <div className="absolute right-0 mt-2 w-36 bg-white rounded-xl shadow-lg border border-surface-100 overflow-hidden z-50 animate-fadeIn">
+                    {languages.map((lang) => (
+                      <button
+                        key={lang.code}
+                        onClick={() => {
+                          changeLanguage(lang.code);
+                          setShowLanguageDropdown(false);
+                        }}
+                        className={`w-full px-3 py-2.5 text-left text-sm hover:bg-surface-50 transition-colors flex items-center gap-2 ${
+                          currentLanguage === lang.code ? 'bg-brand-50 text-brand-600' : 'text-surface-700'
+                        }`}
+                      >
+                        <span>{lang.flag}</span>
+                        <span className="font-medium">{lang.nativeName}</span>
+                      </button>
+                    ))}
+                  </div>
+                </>
+              )}
             </div>
             
             {/* Desktop Navigation */}
@@ -455,12 +506,16 @@ function App() {
               
               {isAuthenticated ? (
                 <button
-                  onClick={logout}
-                  className="flex items-center gap-2 px-3 py-2 text-surface-600 hover:text-accent-coral hover:bg-red-50 rounded-xl transition-all text-sm font-medium"
-                  title={t('common.logout')}
+                  onClick={() => setShowProfile(true)}
+                  className="flex items-center gap-2 px-2 py-1.5 hover:bg-surface-100 rounded-xl transition-all"
+                  title={t('profile.title')}
                 >
-                  <LogOut className="w-4 h-4" />
-                  <span className="hidden lg:inline">{t('common.logout')}</span>
+                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-brand-500 to-purple-500 flex items-center justify-center text-white text-sm font-bold">
+                    {user?.name?.charAt(0).toUpperCase() || user?.email?.charAt(0).toUpperCase()}
+                  </div>
+                  <span className="hidden lg:inline text-sm font-medium text-surface-700 max-w-[100px] truncate">
+                    {user?.name || user?.email?.split('@')[0]}
+                  </span>
                 </button>
               ) : (
                 <>
@@ -668,11 +723,11 @@ function App() {
             
             {isAuthenticated ? (
               <button
-                onClick={logout}
-                className="flex flex-col items-center gap-0.5 p-2.5 min-w-[52px] text-surface-500 active:text-accent-coral active:bg-red-50 rounded-xl transition-all"
+                onClick={() => setShowProfile(true)}
+                className="flex flex-col items-center gap-0.5 p-2.5 min-w-[52px] text-surface-500 active:text-brand-600 active:bg-brand-50 rounded-xl transition-all"
               >
-                <LogOut className="w-5 h-5" />
-                <span className="text-[9px] font-semibold">{t('nav.exit')}</span>
+                <User className="w-5 h-5" />
+                <span className="text-[9px] font-semibold">{t('nav.profile')}</span>
               </button>
             ) : (
               <button
@@ -833,6 +888,12 @@ function App() {
           setShowLogin(true);
         }}
         canClose={true}
+      />
+
+      {/* Profile Modal */}
+      <ProfileModal
+        isOpen={showProfile}
+        onClose={() => setShowProfile(false)}
       />
 
       {/* Onboarding Tour */}

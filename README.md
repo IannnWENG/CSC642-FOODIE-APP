@@ -16,6 +16,15 @@ An AI-powered restaurant and cafe recommender built with React. It integrates th
 - **Advanced Filters** - Filter by radius, type, and price range
 - **Multi-language Support** - Full support for English and Traditional Chinese (繁體中文)
 
+### User Account Features
+
+- **Firebase Authentication** - Secure user registration and login with Firebase Auth
+- **User Profile** - Comprehensive profile page with user statistics and activity tracking
+- **Level System** - Gamified experience with levels based on user activity (Newbie → Foodie → Explorer → Expert → Master)
+- **Achievements** - Unlock achievements for milestones (First Search, Explorer, Collector, AI Friend, Navigator, Streak Master)
+- **Login Streak** - Track consecutive login days with streak counter
+- **Activity Tracking** - View search history, viewed places, and top categories
+
 ### AI Features
 
 - **AI Chat Assistant** - Ask questions about restaurants and get personalized recommendations
@@ -35,7 +44,7 @@ An AI-powered restaurant and cafe recommender built with React. It integrates th
 - Node.js 18+
 - npm 6+
 - Google Maps API Key (Places, Maps JavaScript)
-- Firebase Account (for deployment)
+- Firebase Account (for deployment and authentication)
 
 ## Quick Start
 
@@ -69,13 +78,15 @@ The app opens at `http://localhost:3000`.
 ## How to Use
 
 1. **Select Language** - Choose English or 繁體中文 on first visit
-2. Click **Get Location** to allow the browser to access your location
-3. Choose search radius, type, and price range, then click **Search Nearby**
-4. Click a restaurant marker or list item to see details
-5. Click the **robot icon** 🤖 to open AI chat and ask for recommendations
-6. Use Favorites to save places; Search History keeps your recent searches locally
-7. Click **Translate** 🌐 on non-English reviews to see English translations
-8. Click the **globe icon** 🌍 in the header to change language anytime
+2. **Create Account** - Register with email/password to track your activity and achievements
+3. Click **Get Location** to allow the browser to access your location
+4. Choose search radius, type, and price range, then click **Search Nearby**
+5. Click a restaurant marker or list item to see details
+6. Click the **robot icon** 🤖 to open AI chat and ask for recommendations
+7. Use Favorites to save places; Search History keeps your recent searches locally
+8. Click **Translate** 🌐 on non-English reviews to see English translations
+9. Click the **globe icon** 🌍 in the header to change language anytime
+10. Click your **profile avatar** to view stats, achievements, and activity history
 
 ## Multi-language Support
 
@@ -141,14 +152,15 @@ csc642/
 │   │   ├── LanguageSelector.js   # Language selection screen
 │   │   ├── LoadingSpinner.js     # Loading indicator
 │   │   ├── LocationControls.js   # Location & search controls
-│   │   ├── LoginModal.js         # User login modal
+│   │   ├── LoginModal.js         # User login modal (Firebase Auth)
 │   │   ├── MapComponent.js       # Google Maps integration
 │   │   ├── MenuAIChat.js         # Menu AI assistant
 │   │   ├── MenuModal.js          # Restaurant menu display
 │   │   ├── OnboardingTour.js     # Interactive guided tour
 │   │   ├── PlaceDetailModal.js   # Place details view
+│   │   ├── ProfileModal.js       # User profile with stats & achievements
 │   │   ├── RecommendationList.js # AI recommendations list
-│   │   ├── RegisterModal.js      # User registration modal
+│   │   ├── RegisterModal.js      # User registration modal (Firebase Auth)
 │   │   └── ReviewsModal.js       # Place reviews display
 │   ├── contexts/
 │   │   ├── AuthContext.js        # Authentication context provider
@@ -160,13 +172,15 @@ csc642/
 │   ├── services/
 │   │   ├── aiRecommendationService.js  # AI recommendation scoring
 │   │   ├── aiService.js          # AI API integration
-│   │   ├── authService.js        # Authentication service
+│   │   ├── authService.js        # Firebase Authentication service
 │   │   ├── currencyService.js    # Currency conversion
 │   │   ├── favoritesService.js   # Favorites storage
+│   │   ├── firebaseConfig.js     # Firebase app configuration
 │   │   ├── googleMapsService.js  # Google Maps API wrapper
 │   │   ├── realMenuService.js    # Menu data service
 │   │   ├── searchHistoryService.js # Search history storage
-│   │   └── translateService.js   # AI-powered translation
+│   │   ├── translateService.js   # AI-powered translation
+│   │   └── userStatsService.js   # User activity & stats tracking
 │   ├── utils/
 │   │   └── envCheck.js           # Environment validation
 │   ├── App.js                    # Main application component
@@ -199,6 +213,7 @@ csc642/
 - **Frontend**: React 18, Tailwind CSS
 - **Maps**: Google Maps JavaScript API, Places API
 - **AI**: Groq API (Llama 3.1)
+- **Authentication**: Firebase Authentication (Email/Password)
 - **Hosting**: Firebase Hosting
 - **Backend**: Firebase Cloud Functions
 - **Fonts**: Outfit, Inter (Google Fonts)
@@ -228,6 +243,29 @@ Map markers are color-coded:
 - Shows original text alongside translation
 - Translations are cached for better performance
 
+### User Profile & Achievements
+
+The app includes a gamified user experience with:
+
+- **Level System**: Users earn levels based on activity (searches, views, AI chats)
+
+  - Level 1-4: Newbie
+  - Level 5-14: Foodie
+  - Level 15-29: Explorer
+  - Level 30-49: Expert
+  - Level 50+: Master
+
+- **Achievements**: Unlock badges for reaching milestones
+
+  - First Search - Complete your first search
+  - Explorer - Complete 10 searches
+  - Collector - Save 5 favorites
+  - AI Friend - Have 10 AI conversations
+  - Navigator - Use navigation 5 times
+  - Streak Master - Maintain a 7-day login streak
+
+- **Activity Tracking**: View your search history, viewed places, and preferred categories
+
 ### Internationalization (i18n)
 
 - Context-based language management via `LanguageContext`
@@ -238,11 +276,11 @@ Map markers are color-coded:
 
 ## Limitations
 
-- Some UI components (login, registration) are prototypes
 - Search results depend on Google Maps API availability and quota
 - AI responses may vary in accuracy
-- Favorites and search history are stored in browser localStorage
+- Favorites, search history, and user stats are stored in browser localStorage
 - Translation requires AI API access
+- Firebase Authentication requires network connectivity
 
 ## License
 

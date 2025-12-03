@@ -160,8 +160,8 @@ const PlaceDetailModal = ({ place, isOpen, onClose, onFavorite, isFavorite, reco
     }
     
     if (lat && lng) {
-      const url = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
-      window.open(url, '_blank');
+    const url = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
+    window.open(url, '_blank');
     } else {
       // Fallback: use place name for directions
       const encodedName = encodeURIComponent(place.name + ' ' + (place.vicinity || ''));

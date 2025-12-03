@@ -40,7 +40,9 @@ const zhTW = {
     history: '歷史',
     update: '更新',
     locate: '定位',
-    exit: '離開'
+    exit: '離開',
+    help: '說明',
+    profile: '個人'
   },
 
   // Location Controls
@@ -327,6 +329,65 @@ const zhTW = {
     thinking: '思考中...'
   },
 
+  // Profile
+  profile: {
+    title: '個人檔案',
+    level: '等級',
+    levelNewbie: '新手',
+    levelFoodie: '美食家',
+    levelExplorer: '探索者',
+    levelExpert: '專家',
+    levelMaster: '大師',
+    
+    // Tabs
+    tabOverview: '總覽',
+    tabActivity: '活動',
+    tabAchievements: '成就',
+    
+    // Stats
+    searches: '搜尋次數',
+    placesViewed: '瀏覽餐廳',
+    favorites: '收藏數',
+    aiChats: 'AI 對話',
+    menusViewed: '菜單瀏覽',
+    navigations: '導航次數',
+    
+    // Account Info
+    accountInfo: '帳戶資訊',
+    email: '電子郵件',
+    memberSince: '加入時間',
+    accountAge: '帳戶天數',
+    days: '天',
+    
+    // Activity
+    loginStreak: '連續登入',
+    best: '最佳紀錄',
+    recentActivity: '最近活動',
+    noActivity: '尚無活動記錄',
+    justNow: '剛剛',
+    minutesAgo: '分鐘前',
+    hoursAgo: '小時前',
+    daysAgo: '天前',
+    
+    // Categories
+    topCategories: '最愛類別',
+    
+    // Achievements
+    achievementsUnlocked: '已解鎖成就',
+    achievementFirstSearch: '初次搜尋',
+    achievementFirstSearchDesc: '完成第一次搜尋',
+    achievementExplorer: '探索家',
+    achievementExplorerDesc: '完成 10 次搜尋',
+    achievementCollector: '收藏家',
+    achievementCollectorDesc: '收藏 5 間餐廳',
+    achievementAIFriend: 'AI 好友',
+    achievementAIFriendDesc: '與 AI 對話 10 次',
+    achievementNavigator: '導航員',
+    achievementNavigatorDesc: '導航前往 5 個地點',
+    achievementStreakMaster: '連續達人',
+    achievementStreakMasterDesc: '連續登入 7 天'
+  },
+
   // Place Details
   placeDetails: {
     rating: '評分',
@@ -364,7 +425,17 @@ const zhTW = {
     locationError: '無法取得位置。請啟用定位服務。',
     searchError: '搜尋失敗。請重試。',
     networkError: '網路錯誤。請檢查您的連線。',
-    genericError: '發生錯誤。請重試。'
+    genericError: '發生錯誤。請重試。',
+    
+    // Firebase Auth Errors
+    emailInUse: '此電子郵件已被註冊',
+    invalidEmail: '請輸入有效的電子郵件地址',
+    weakPassword: '密碼至少需要 6 個字元',
+    userDisabled: '此帳戶已被停用',
+    userNotFound: '電子郵件或密碼錯誤',
+    wrongPassword: '電子郵件或密碼錯誤',
+    tooManyRequests: '嘗試次數過多，請稍後再試',
+    allFieldsRequired: '所有欄位都是必填的'
   }
 };
 
